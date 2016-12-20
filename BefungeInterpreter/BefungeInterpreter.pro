@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    file.cpp
+    file.cpp \
+    codetorus.cpp
 
 HEADERS  += mainwindow.h \
-    file.h
+    file.h \
+    codetorus.h
 
 FORMS    += mainwindow.ui

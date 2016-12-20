@@ -1,21 +1,26 @@
 #ifndef FILE_H
 #define FILE_H
-#include <QMainWindow>
 #include <QString>
+#include <vector>
+
+#include "mainwindow.h"
 
 class File
 {
 public:
     static const int DEFAULT_WIDTH = 80;
     static const int DEFAULT_HEIGHT = 25;
-    File(QMainWindow parent, QString dir);
-    bool SaveFile();
+    File(MainWindow* parent, QString dir);
+    bool saveFile();
+    bool saveFileAs(QString newDir);
     bool loadFile();
+    int getWidth();
+    int getHeight();
 
 private:
-    QMainWindow parent;
+    MainWindow *parent;
     QString dir;
-    char charAr[][];
+    int width, height;
 };
 
 #endif // FILE_H

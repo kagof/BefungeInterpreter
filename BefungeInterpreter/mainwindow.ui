@@ -265,6 +265,9 @@
         <family>Courier New</family>
        </font>
       </property>
+      <property name="lineWrapMode">
+       <enum>QPlainTextEdit::NoWrap</enum>
+      </property>
      </widget>
     </item>
     <item row="0" column="5" rowspan="10">
