@@ -26,7 +26,7 @@
        inkscape:collect="always"
        id="linearGradient4166">
       <stop
-         style="stop-color:#ffffff;stop-opacity:0.77"
+         style="stop-color:#ffffff;stop-opacity:1"
          offset="0"
          id="stop4168" />
       <stop
@@ -99,7 +99,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="10.24"
      inkscape:cx="28.351407"
-     inkscape:cy="3.9058129"
+     inkscape:cy="15.624563"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -124,7 +124,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -142,6 +142,24 @@
        inkscape:export-filename="C:\Users\karlg\Desktop\path3356.png"
        inkscape:export-xdpi="180"
        inkscape:export-ydpi="180" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:6.12900114px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="14.777676"
+       y="17.592051"
+       id="text3370-9"
+       sodipodi:linespacing="125%"
+       transform="scale(0.96662608,1.0345262)"><tspan
+         sodipodi:role="line"
+         id="tspan3372-6"
+         x="14.777676"
+         y="17.592051"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.19350243px;font-family:'Courier New';-inkscape-font-specification:'Courier New';fill:#000000">--v</tspan><tspan
+         sodipodi:role="line"
+         x="14.777676"
+         y="29.083929"
+         id="tspan3374-1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.19350243px;font-family:'Courier New';-inkscape-font-specification:'Courier New';fill:#000000">@.&lt;</tspan></text>
   </g>
   <g
      id="layer1"
@@ -179,21 +197,21 @@
          y="15.657507" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.12900114px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;font-size:6.12900114px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;opacity:1;fill:#000080;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="14.766188"
-       y="17.514944"
+       y="17.609341"
        id="text3370"
        sodipodi:linespacing="125%"
        transform="scale(0.96662608,1.0345262)"><tspan
          sodipodi:role="line"
          id="tspan3372"
          x="14.766188"
-         y="17.514944"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.19350243px;font-family:'Courier New';-inkscape-font-specification:'Courier New'">--v</tspan><tspan
+         y="17.609341"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.19350243px;font-family:'Courier New';-inkscape-font-specification:'Courier New';fill:#000080;">--v</tspan><tspan
          sodipodi:role="line"
          x="14.766188"
-         y="29.006823"
+         y="29.101219"
          id="tspan3374"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.19350243px;font-family:'Courier New';-inkscape-font-specification:'Courier New'">@.&lt;</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.19350243px;font-family:'Courier New';-inkscape-font-specification:'Courier New';fill:#000080;">@.&lt;</tspan></text>
   </g>
 </svg>

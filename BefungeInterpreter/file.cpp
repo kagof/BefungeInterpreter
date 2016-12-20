@@ -16,7 +16,6 @@ bool File::loadFile() {
     width = DEFAULT_WIDTH;
     height = DEFAULT_HEIGHT;
     std::ifstream in(dir.toStdString());
-
     if (!in.is_open()){
         return false;  // return false if the file failed to open.
     }
