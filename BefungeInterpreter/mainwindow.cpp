@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->resize(2000,1200);
+    MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
 
 }
 

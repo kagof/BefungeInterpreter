@@ -22,3 +22,8 @@ HEADERS  += mainwindow.h \
     codetorus.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    images.qrc
+	
+RC_FILE = bficon.rc
