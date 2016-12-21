@@ -1,9 +1,10 @@
 #include "interpreter.h"
 
 #include <string>
+#include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <random>
+#include <chrono>
 
 Interpreter::Interpreter(MainWindow *parent, CodeTorus *torus)
 {
@@ -12,6 +13,9 @@ Interpreter::Interpreter(MainWindow *parent, CodeTorus *torus)
     st = new std::stack<char>();
     stringmode = false;
     outputStr;
+
+    //create and seed a random number generator for '?'
+    std::mt19937 rand_gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 }
 
 void Interpreter::step()
@@ -100,11 +104,8 @@ void Interpreter::step()
         return;
     }
     case('?'): {  // random direction
-        //create & seed a random number generator (between 0 and 3)
-        std::random_device rd;
-        std::mt19937 rand_gen(rd());
         std::uniform_int_distribution<> range(0, 3);
-        torus->changeDirection(static_cast<CodeTorus::direction>(range(rand_gen)));
+        torus->changeDirection(static_cast<CodeTorus::direction>(range(rand_gen)));  //generate random number between 0-3 as a direction
         torus->next();
         return;
     }

@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <stack>
+#include <random>
 
 #include "mainwindow.h"
 #include "codetorus.h"
@@ -27,6 +28,7 @@ private:
     QString outputStr;
     void output(char c);
     void output(int i);
+    std::mt19937 rand_gen;
 
 };
 
