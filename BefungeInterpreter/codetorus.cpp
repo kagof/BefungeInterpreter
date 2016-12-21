@@ -20,10 +20,10 @@ char CodeTorus::getChar(int x, int y)
     else return (char) 0;
 }
 
-void CodeTorus::putChar(char c, int row, int col)
+void CodeTorus::putChar(char c, int x, int y)
 {
-    if (row < height && col < width){
-        chars.replace(col + (width+1)*row, 1, new QChar(c),1);
+    if (y < height && x < width){
+        chars.replace(x + (width+1)*y, 1, new QChar(c),1);
         parent->setSourceBoxText(chars);
     }
 

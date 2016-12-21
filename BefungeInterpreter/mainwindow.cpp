@@ -52,7 +52,9 @@ void MainWindow::addToSourceBox(char c)
 
 void MainWindow::setSourceBoxText(QString s)
 {
+    ui->sourceBox->setReadOnly(false);
     ui->sourceBox->setPlainText(s);
+    ui->sourceBox->setReadOnly((mode == RUN));
 }
 
 void MainWindow::setStackBoxText(QString s)
@@ -97,7 +99,7 @@ void MainWindow::on_actionLoad_File_triggered()
 void MainWindow::on_runRadioButton_toggled(bool checked)
 {
     ui->editRadioButton->toggled(!checked);
-    //ui->sourceBox->setReadOnly(checked);
+    ui->sourceBox->setReadOnly(checked);  // user can't edit the text when in run mode.
 
     //Run Mode:
     if (checked) {
