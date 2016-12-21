@@ -1,6 +1,7 @@
 #include <fstream>
 #include <string>
 #include <ios>
+#include <cstddef>
 
 #include "file.h"
 
@@ -38,6 +39,7 @@ bool File::loadFile() {
     in.clear();
     in.seekg(0, std::ios::beg);
 
+    //input into the UI
     while (in.is_open() && std::getline(in, currentLine)){
         int i;
         for (i = 0; i < currentLine.length(); i++){
@@ -50,6 +52,11 @@ bool File::loadFile() {
         parent->addToSourceBox('\n');
     }
 
+    std::string tmp = dir.toStdString();
+
+    std::size_t lastSlash = tmp.find_last_of("/\\");
+    filename = tmp.substr(lastSlash+1);
+
     return true;
 }
 
@@ -61,4 +68,9 @@ int File::getWidth()
 int File::getHeight()
 {
     return height;
+}
+
+std::string File::getFilename()
+{
+    return filename;
 }

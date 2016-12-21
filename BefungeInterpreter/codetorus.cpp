@@ -17,14 +17,13 @@ char CodeTorus::getChar(int row, int col)
     if (row < height && col < width){
         return chars.at(col + width*row).toLatin1();
     }
-    else return ' ';
+    else return (char) 0;
 }
 
 void CodeTorus::putChar(char c, int row, int col)
 {
     if (row < height && col < width){
-        chars.remove(col + (width+1)*row, c);
-        chars.insert(col + (width+1)*row, c);
+        chars.replace(col + (width+1)*row, 1, new QChar(c),1);
         parent->setSourceBoxText(chars);
     }
 
@@ -86,4 +85,9 @@ void CodeTorus::next()
         }
     }
     currentChar = getChar(x, y);
+}
+
+QString CodeTorus::getChars()
+{
+    return chars;
 }

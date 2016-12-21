@@ -2,6 +2,7 @@
 #define FILE_H
 #include <QString>
 #include <vector>
+#include <string>
 
 #include "mainwindow.h"
 
@@ -16,11 +17,13 @@ public:
     bool loadFile();
     int getWidth();
     int getHeight();
+    std::string getFilename();
 
 private:
     MainWindow *parent;
     QString dir;
     int width, height;
+    std::string filename;
 };
 
 #endif // FILE_H

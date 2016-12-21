@@ -1,4 +1,6 @@
 #include <QString>
+#include <QStringList>
+#include <QChar>
 #include <QFileDialog>
 #include <QDir>
 #include <iostream>
@@ -15,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->resize(2000,1200);
     MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
+
+    ui->actionSave_File->setEnabled(false);
 
     mode = EDIT;
     fileIsOpen = false;
@@ -48,16 +52,34 @@ void MainWindow::on_actionLoad_File_triggered()
                                                           tr("Befunge file (*.bf);; Text file (*.txt);;  All files (*.*)"));
     f = new File(this, filePath);
     fileIsOpen = true;
+    ui->actionSave_File->setEnabled(true);
+    ui->sourceBox->document()->setModified(false);
 }
 
+/*
+ * turns on/off run mode.
+ * */
 void MainWindow::on_runRadioButton_toggled(bool checked)
 {
     ui->editRadioButton->toggled(!checked);
     ui->sourceBox->setReadOnly(checked);
+
+    //Run Mode:
     if (checked) {
-        if (fileIsOpen) torus = new CodeTorus(this, f->getWidth(), f->getHeight(), ui->sourceBox->toPlainText());
+
+        //if we already opened the file, and haven't changed anything, can use previously obtained values
+        if (fileIsOpen && !this->windowTitle().endsWith(QString("*"))) torus = new CodeTorus(this, f->getWidth(), f->getHeight(), ui->sourceBox->toPlainText());
+
         else{
             QString st = ui->sourceBox->toPlainText();
+
+            //ending with a newline character. the upcoming for loop does not work without it
+            if (!st.endsWith("\n")) {
+                st.append(QChar('\n'));
+                this->setSourceBoxText(st);
+            }
+
+            //find the width and height of this text
             int longest = -1;
             int current = 0;
             int numLines = 0;
@@ -69,8 +91,36 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
                 }
                 else current ++;
             }
+
+            //remove the trailing newline, so that the split does not create a blank line at the end
+            if (st.endsWith("\n")) {
+                st.chop(1);
+                this->setSourceBoxText(st);
+            }
+
+            QStringList sl = st.split(QChar('\n'));
+
+            //pad each line with spaces, so that they are all the same length
+            for (QStringList::iterator it = sl.begin(); it != sl.end(); it++) {
+                while (it->length() < longest){
+                    it->append(QChar(' '));
+                }
+            }
+
+            st = sl.join(QChar('\n'));
+
+            //re-append a trailing newline
+            if (!st.endsWith("\n")) {
+                st.append(QChar('\n'));
+                this->setSourceBoxText(st);
+            }
+            this->setSourceBoxText(st);
+
+            //create the torus
             torus = new CodeTorus(this, longest, numLines, st);
         }
+
+        //we don't want the user to try to manually edit the source text when in run mode
         mode = RUN;
         ui->actionCut->setEnabled(false);
         ui->actionUndo->setEnabled(false);
@@ -151,10 +201,35 @@ void MainWindow::on_menuEdit_aboutToShow()
         ui->actionCut->setEnabled(copy);
         ui->actionUndo->setEnabled(undo);
         ui->actionRedo->setEnabled(redo);
+        ui->actionOverwrite_Mode->setEnabled(true);
     }
     else {
         ui->actionCut->setEnabled(false);
         ui->actionRedo->setEnabled(false);
         ui->actionUndo->setEnabled(false);
+        ui->actionOverwrite_Mode->setEnabled(false);
     }
+}
+
+void MainWindow::on_sourceBox_modificationChanged(bool arg1)
+{
+    if (arg1) {
+        if (fileIsOpen) {
+            std::string tmpstr = "Kagof Befunge Interpreter - " + f->getFilename() + " *";
+            MainWindow::setWindowTitle(QString(tmpstr.c_str()));
+        }
+        else MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter *"));
+    }
+    else {
+        if (fileIsOpen) {
+            std::string tmpstr = "Kagof Befunge Interpreter - " + f->getFilename();
+            MainWindow::setWindowTitle(QString(tmpstr.c_str()));
+        }
+        else MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
+    }
+}
+
+void MainWindow::on_actionOverwrite_Mode_triggered(bool checked)
+{
+    ui->sourceBox->setOverwriteMode(checked);
 }

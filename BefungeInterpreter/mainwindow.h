@@ -5,6 +5,7 @@
 
 class File;
 class CodeTorus;
+class Interpreter;
 
 enum Mode{EDIT, RUN};
 
@@ -48,11 +49,17 @@ private slots:
 
     void on_menuEdit_aboutToShow();
 
+    void on_sourceBox_modificationChanged(bool arg1);
+
+    void on_actionOverwrite_Mode_triggered(bool checked);
+
 private:
     Ui::MainWindow *ui;
 
     File* f;
     CodeTorus* torus;
+    Interpreter* terp;
+
     bool fileIsOpen;
     Mode mode;
     bool undo, redo, copy;

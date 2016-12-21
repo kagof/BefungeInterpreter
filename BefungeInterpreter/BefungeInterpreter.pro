@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     file.cpp \
-    codetorus.cpp
+    codetorus.cpp \
+    interpreter.cpp
 
 HEADERS  += mainwindow.h \
     file.h \
-    codetorus.h
+    codetorus.h \
+    interpreter.h
 
 FORMS    += mainwindow.ui
 
