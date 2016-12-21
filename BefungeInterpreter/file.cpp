@@ -14,8 +14,8 @@ File::File(MainWindow* parent, QString dir)
 }
 
 bool File::loadFile() {
-    width = DEFAULT_WIDTH;
-    height = DEFAULT_HEIGHT;
+    width = -1;
+    height = 0;
     std::ifstream in(dir.toStdString());
     if (!in.is_open()){
         return false;  // return false if the file failed to open.

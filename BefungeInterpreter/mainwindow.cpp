@@ -204,7 +204,7 @@ void MainWindow::on_actionLoad_File_triggered()
     QString filePath = QFileDialog::getOpenFileName(this,
                                                           "Select Befunge-93 source file to load",
                                                           QDir::currentPath(),
-                                                          tr("Befunge file (*.bf);; Text file (*.txt);;  All files (*.*)"));
+                                                          tr("Befunge file (*.bf);; Befunge-93 file (*.b93);; Text file (*.txt);;  All files (*.*)"));
     f = new File(this, filePath);
     fileIsOpen = true;
     ui->actionSave_File->setEnabled(true);
@@ -271,10 +271,11 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
             }
             this->setSourceBoxText(st);
 
-            //create the torus & interpreter
-            torus = new CodeTorus(this, longest, numLines, st);
-            terp = new Interpreter(this, torus);
+            //create the torus
+            torus = new CodeTorus(this, longest, numLines, st);            
         }
+        //create the interpreter
+        terp = new Interpreter(this, torus);
 
         //highlight the first element
         cursor = new QTextCursor(ui->sourceBox->document());
