@@ -32,6 +32,8 @@ public:
     void programFinished();
     bool isRunning();
     bool isStarted();
+    char inputChar();
+    int inputInt();
 
 private slots:
     void on_actionLoad_File_triggered();
@@ -70,6 +72,8 @@ private slots:
 
     void on_slowButton_clicked();
 
+    void on_inputSubmitButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -88,6 +92,7 @@ private:
     bool undo, redo, copy;
     bool running;
     bool started;
+    bool submitted;
 };
 
 #endif // MAINWINDOW_H

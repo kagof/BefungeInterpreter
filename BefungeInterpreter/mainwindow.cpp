@@ -9,10 +9,12 @@
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <QTextFormat>
+#include <QMessageBox>
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <stdexcept>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -45,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     running = false;
     started = false;
+    submitted = false;
 
 }
 
@@ -83,6 +86,7 @@ void MainWindow::programFinished()
     if (started) ui->outputBox->setPlainText(QString(terp->getOutputStr()));
     running = false;
     started = false;
+    ui->editRadioButton->setEnabled(true);
     ui->stepButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->debugButton->setEnabled(false);
@@ -100,6 +104,98 @@ bool MainWindow::isRunning()
 bool MainWindow::isStarted()
 {
     return started;
+}
+
+char MainWindow::inputChar()
+{
+    //don't allow user to leave this mode
+    ui->inputSubmitButton->setEnabled(true);
+    ui->startButton->setEnabled(false);
+    ui->debugButton->setEnabled(false);
+    ui->stepButton->setEnabled(false);
+    ui->slowButton->setEnabled(false);
+    ui->editRadioButton->setEnabled(false);
+
+
+    ui->inputLabel->setText(QString("Input Character"));
+    while (true) {
+        while (!submitted){  // loop until user clicks the submit button.
+            this->repaint();
+            qApp->processEvents();
+        }
+
+        QString tmpStr = ui->inputBox->text();
+
+        //only accept strings of length 1
+        if (tmpStr.length() == 1) {
+            //reset the UI elements
+            ui->inputLabel->setText(QString("Input"));
+            ui->inputBox->clear();
+            submitted = false;
+            ui->inputSubmitButton->setEnabled(false);
+            ui->startButton->setEnabled(true);
+            ui->debugButton->setEnabled(true);
+            ui->stepButton->setEnabled(true);
+            ui->slowButton->setEnabled(true);
+            ui->editRadioButton->setEnabled(true);
+
+            return tmpStr.at(0).toLatin1();
+        }
+
+        //on a bad input, pop up a message box and try again
+        ui->inputBox->clear();
+        submitted = false;
+        QMessageBox* box = new QMessageBox(QMessageBox::Warning, QString("Invalid"), QString("Please enter a valid character."), QMessageBox::Ok, this);
+        box->exec();
+    }
+}
+
+int MainWindow::inputInt()
+{
+    //don't allow user to leave this mode
+    ui->inputSubmitButton->setEnabled(true);
+    ui->startButton->setEnabled(false);
+    ui->debugButton->setEnabled(false);
+    ui->stepButton->setEnabled(false);
+    ui->slowButton->setEnabled(false);
+    ui->editRadioButton->setEnabled(false);
+
+
+    ui->inputLabel->setText(QString("Input Integer"));
+    while (true) {
+        while (!submitted){  // loop until user clicks the submit button.
+            this->repaint();
+            qApp->processEvents();
+        }
+
+        //get input
+        std::string tmpStr = ui->inputBox->text().toStdString();
+
+        //if the input can be interpreted as an integer
+        try {
+            int i = std::stoi(tmpStr);
+
+            //reset the UI elements
+            ui->inputLabel->setText(QString("Input"));
+            ui->inputBox->clear();
+            submitted = false;
+            ui->inputSubmitButton->setEnabled(false);
+            ui->startButton->setEnabled(true);
+            ui->debugButton->setEnabled(true);
+            ui->stepButton->setEnabled(true);
+            ui->slowButton->setEnabled(true);
+            ui->editRadioButton->setEnabled(true);
+
+            return i;
+        }
+        //on a bad input, pop up a message box and try again
+        catch (std::invalid_argument e){
+            ui->inputBox->clear();
+            submitted = false;
+            QMessageBox* box = new QMessageBox(QMessageBox::Warning, QString("Invalid"), QString("Please enter a valid integer."), QMessageBox::Ok, this);
+            box->exec();
+        }
+    }
 }
 
 
@@ -354,6 +450,7 @@ void MainWindow::on_slowButton_clicked()
 {
     running = !running;
     if (running) {
+        ui->editRadioButton->setEnabled(false);
         ui->slowButton->setText(QString("Stop"));
         while (running) {
             on_stepButton_clicked();
@@ -368,8 +465,14 @@ void MainWindow::on_slowButton_clicked()
         ui->slowButton->setText(QString("Slow"));
     }
     else {
+        ui->editRadioButton->setEnabled(true);
         ui->slowButton->setText(QString("Slow"));
         this->repaint();
         qApp->processEvents();
     }
+}
+
+void MainWindow::on_inputSubmitButton_clicked()
+{
+    submitted = true;
 }

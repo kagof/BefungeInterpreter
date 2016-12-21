@@ -183,12 +183,14 @@ void Interpreter::step()
         return;
     }
     case('&'): {  // get integer input
-        //TODO: this case
+        int i = parent->inputInt();
+        push((char) i);
         torus->next();
         return;
     }
     case('~'): {  // get ASCII char input
-        //TODO: this case
+        char c = parent->inputChar();
+        push(c);
         torus->next();
         return;
     }
