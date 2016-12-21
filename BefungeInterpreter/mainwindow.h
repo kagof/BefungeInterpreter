@@ -30,6 +30,8 @@ public:
     void output(int i);
 
     void programFinished();
+    bool isRunning();
+    bool isStarted();
 
 private slots:
     void on_actionLoad_File_triggered();
@@ -85,6 +87,7 @@ private:
     Mode mode;
     bool undo, redo, copy;
     bool running;
+    bool started;
 };
 
 #endif // MAINWINDOW_H

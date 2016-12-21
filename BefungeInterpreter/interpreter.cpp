@@ -11,6 +11,7 @@ Interpreter::Interpreter(MainWindow *parent, CodeTorus *torus)
     this->torus = torus;
     st = new std::stack<char>();
     stringmode = false;
+    outputStr;
 }
 
 void Interpreter::step()
@@ -149,13 +150,13 @@ void Interpreter::step()
     }
     case('.'): {  // pop & output as integer
         int i = (int)pop();
-        parent->output(i);
+        output(i);
         torus->next();
         return;
     }
     case(','): {  // pop & output as ASCII char
         char c = pop();
-        parent->output(c);
+        output(c);
         torus->next();
         return;
     }
@@ -310,7 +311,7 @@ QString Interpreter::stackToQString()
 void Interpreter::push(char c)
 {
     st->push(c);
-    parent->setStackBoxText(stackToQString());
+    if (!parent->isStarted()) parent->setStackBoxText(stackToQString());
 }
 
 char Interpreter::pop()
@@ -319,6 +320,23 @@ char Interpreter::pop()
 
     char tmp = st->top();
     st->pop();
-    parent->setStackBoxText(stackToQString());
+    if (!parent->isStarted()) parent->setStackBoxText(stackToQString());
     return tmp;
+}
+
+QString Interpreter::getOutputStr()
+{
+    return outputStr;
+}
+
+void Interpreter::output(char c)
+{
+    if (parent->isStarted()) outputStr = outputStr + c;
+    else parent->output(c);
+}
+
+void Interpreter::output(int i)
+{
+    if (parent->isStarted()) outputStr.append(std::to_string(i).c_str());
+    else parent->output(i);
 }

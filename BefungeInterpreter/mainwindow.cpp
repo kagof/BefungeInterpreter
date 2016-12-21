@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     slowTime = ui->speedBox->value();
 
     running = false;
+    started = false;
 
 }
 
@@ -79,11 +80,26 @@ void MainWindow::output(int i)
 
 void MainWindow::programFinished()
 {
+    if (started) ui->outputBox->setPlainText(QString(terp->getOutputStr()));
     running = false;
+    started = false;
     ui->stepButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->debugButton->setEnabled(false);
     ui->slowButton->setEnabled(false);
+
+    this->repaint();
+    qApp->processEvents();
+}
+
+bool MainWindow::isRunning()
+{
+    return running;
+}
+
+bool MainWindow::isStarted()
+{
+    return started;
 }
 
 
@@ -312,7 +328,8 @@ void MainWindow::on_stepButton_clicked()
 
 void MainWindow::on_startButton_clicked()
 {
-    while (running) {
+    started = !started;
+    while (started) {
         terp->step();
     }
     cursor = new QTextCursor(ui->sourceBox->document());

@@ -17,12 +17,16 @@ public:
     QString stackToQString();
     void push(char c);
     char pop();
+    QString getOutputStr();
 
 private:
     bool stringmode;
     MainWindow* parent;
     CodeTorus* torus;
     std::stack<char>* st;
+    QString outputStr;
+    void output(char c);
+    void output(int i);
 
 };
 
