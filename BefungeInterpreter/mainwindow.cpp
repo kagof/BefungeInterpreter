@@ -3,12 +3,19 @@
 #include <QChar>
 #include <QFileDialog>
 #include <QDir>
+#include <QBrush>
+#include <QColor>
+#include <QTextCursor>
+#include <QTextCharFormat>
+#include <QTextFormat>
+
 #include <iostream>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "file.h"
 #include "codetorus.h"
+#include "interpreter.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,6 +26,11 @@ MainWindow::MainWindow(QWidget *parent) :
     MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
 
     ui->actionSave_File->setEnabled(false);
+
+    currentCharFormat = new QTextCharFormat();
+    currentCharFormat->setBackground(QBrush(Qt::cyan));
+
+    defaultFormat = new QTextCharFormat(ui->sourceBox->currentCharFormat());
 
     mode = EDIT;
     fileIsOpen = false;
@@ -43,6 +55,29 @@ void MainWindow::setSourceBoxText(QString s)
     ui->sourceBox->setPlainText(s);
 }
 
+void MainWindow::setStackBoxText(QString s)
+{
+    ui->stackBox->setPlainText(s);
+}
+
+void MainWindow::output(char c)
+{
+    ui->outputBox->insertPlainText(QString(c));
+}
+
+void MainWindow::output(int i)
+{
+    ui->outputBox->insertPlainText(QString(std::to_string(i).c_str()));
+}
+
+void MainWindow::programFinished()
+{
+    ui->stepButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->debugButton->setEnabled(false);
+    ui->slowButton->setEnabled(false);
+}
+
 
 void MainWindow::on_actionLoad_File_triggered()
 {
@@ -62,7 +97,7 @@ void MainWindow::on_actionLoad_File_triggered()
 void MainWindow::on_runRadioButton_toggled(bool checked)
 {
     ui->editRadioButton->toggled(!checked);
-    ui->sourceBox->setReadOnly(checked);
+    //ui->sourceBox->setReadOnly(checked);
 
     //Run Mode:
     if (checked) {
@@ -116,9 +151,17 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
             }
             this->setSourceBoxText(st);
 
-            //create the torus
+            //create the torus & interpreter
             torus = new CodeTorus(this, longest, numLines, st);
+            terp = new Interpreter(this, torus);
         }
+
+        //highlight the first element
+        cursor = new QTextCursor(ui->sourceBox->document());
+        cursor->setPosition(1, QTextCursor::KeepAnchor);
+        cursor->setCharFormat(*currentCharFormat);
+        cursor->clearSelection();
+        delete cursor;
 
         //we don't want the user to try to manually edit the source text when in run mode
         mode = RUN;
@@ -126,12 +169,21 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->actionUndo->setEnabled(false);
         ui->actionRedo->setEnabled(false);
         ui->actionPaste->setEnabled(false);
+
     }
     else {
         mode = EDIT;
         ui->stackBox->clear();
         ui->inputBox->clear();
         ui->outputBox->clear();
+        delete torus;
+        delete terp;
+
+        cursor = new QTextCursor(ui->sourceBox->document());
+        cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+        cursor->setCharFormat(*defaultFormat);
+        cursor->clearSelection();
+        delete cursor;
     }
     ui->sourceBox->setUndoRedoEnabled(checked);
 
@@ -232,4 +284,20 @@ void MainWindow::on_sourceBox_modificationChanged(bool arg1)
 void MainWindow::on_actionOverwrite_Mode_triggered(bool checked)
 {
     ui->sourceBox->setOverwriteMode(checked);
+}
+
+void MainWindow::on_stepButton_clicked()
+{
+    terp->step();
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    cursor->setCharFormat(*defaultFormat);
+    cursor->clearSelection();
+    delete cursor;
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->setPosition(torus->position());
+    cursor->setPosition(torus->position()+1, QTextCursor::KeepAnchor);
+    cursor->setCharFormat(*currentCharFormat);
+    cursor->clearSelection();
+    delete cursor;
 }

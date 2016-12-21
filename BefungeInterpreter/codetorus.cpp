@@ -12,10 +12,10 @@ CodeTorus::CodeTorus(MainWindow *parent, int width, int height, QString chars)
     this->currentChar = getChar(x, y);
 }
 
-char CodeTorus::getChar(int row, int col)
+char CodeTorus::getChar(int x, int y)
 {
-    if (row < height && col < width){
-        return chars.at(col + width*row).toLatin1();
+    if (y < height && x < width){
+        return chars.at(x + (width + 1)*y).toLatin1();
     }
     else return (char) 0;
 }
@@ -59,6 +59,11 @@ int CodeTorus::getY()
     return y;
 }
 
+int CodeTorus::position()
+{
+    return x + (width + 1)*y;
+}
+
 char CodeTorus::getCurrentChar()
 {
     return currentChar;
@@ -70,18 +75,24 @@ void CodeTorus::next()
         case(RIGHT):
         {
             x = (x + 1) % width;
+            break;
         }
         case(LEFT):
         {
-            x = (x - 1) % height;
+            if (x == 0) x = width - 1;
+            else x = x - 1;
+            break;
         }
         case(UP):
         {
-            y = (y - 1) % height;
+            if (y == 0) y = height - 1;
+            else y = y - 1;
+            break;
         }
         case(DOWN):
         {
             y = (y + 1) % height;
+            break;
         }
     }
     currentChar = getChar(x, y);

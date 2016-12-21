@@ -17,6 +17,7 @@ public:
     void changeDirection(direction newDrctn);
     int getX();
     int getY();
+    int position();
     char getCurrentChar();
     void next();
     QString getChars();

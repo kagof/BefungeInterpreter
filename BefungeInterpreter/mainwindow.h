@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTextCharFormat>
+#include <QTextCursor>
 
 class File;
 class CodeTorus;
@@ -23,6 +25,11 @@ public:
 
     void addToSourceBox(char c);
     void setSourceBoxText(QString s);
+    void setStackBoxText(QString s);
+    void output(char c);
+    void output(int i);
+
+    void programFinished();
 
 private slots:
     void on_actionLoad_File_triggered();
@@ -53,12 +60,18 @@ private slots:
 
     void on_actionOverwrite_Mode_triggered(bool checked);
 
+    void on_stepButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     File* f;
     CodeTorus* torus;
     Interpreter* terp;
+
+    QTextCharFormat *currentCharFormat;
+    QTextCharFormat *defaultFormat;
+    QTextCursor *cursor;
 
     bool fileIsOpen;
     Mode mode;

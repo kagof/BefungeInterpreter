@@ -19,13 +19,10 @@ public:
     char pop();
 
 private:
-    bool inputMode;
+    bool stringmode;
     MainWindow* parent;
     CodeTorus* torus;
     std::stack<char>* st;
-
-signals:
-    void programTerminates();
 
 };
 
