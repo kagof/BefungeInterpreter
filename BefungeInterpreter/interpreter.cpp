@@ -127,8 +127,9 @@ void Interpreter::step()
         return;
     }
     case(':'): {  // duplicate
+        bool startsEmpty = (st->empty());
         char c = pop();
-        if (!st->empty()) push(c);  // only actually want to push it twice if the stack was empty
+        if (!startsEmpty) push(c);  // only actually want to push it twice if the stack was empty
         push(c);
         torus->next();
         return;

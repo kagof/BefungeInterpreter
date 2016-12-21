@@ -62,12 +62,20 @@ private slots:
 
     void on_stepButton_clicked();
 
+    void on_startButton_clicked();
+
+    void on_speedBox_valueChanged(int arg1);
+
+    void on_slowButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     File* f;
     CodeTorus* torus;
     Interpreter* terp;
+
+    int slowTime;
 
     QTextCharFormat *currentCharFormat;
     QTextCharFormat *defaultFormat;
@@ -76,6 +84,7 @@ private:
     bool fileIsOpen;
     Mode mode;
     bool undo, redo, copy;
+    bool running;
 };
 
 #endif // MAINWINDOW_H

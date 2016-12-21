@@ -5,11 +5,14 @@
 #include <QDir>
 #include <QBrush>
 #include <QColor>
+#include <QTextOption>
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <QTextFormat>
 
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -30,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     currentCharFormat = new QTextCharFormat();
     currentCharFormat->setBackground(QBrush(Qt::cyan));
 
+    ui->sourceBox->setWordWrapMode(QTextOption::NoWrap);
     defaultFormat = new QTextCharFormat(ui->sourceBox->currentCharFormat());
 
     mode = EDIT;
@@ -37,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
     undo = false;
     redo = false;
     copy = false;
+    slowTime = ui->speedBox->value();
+
+    running = false;
 
 }
 
@@ -52,9 +59,7 @@ void MainWindow::addToSourceBox(char c)
 
 void MainWindow::setSourceBoxText(QString s)
 {
-    ui->sourceBox->setReadOnly(false);
     ui->sourceBox->setPlainText(s);
-    ui->sourceBox->setReadOnly((mode == RUN));
 }
 
 void MainWindow::setStackBoxText(QString s)
@@ -74,6 +79,7 @@ void MainWindow::output(int i)
 
 void MainWindow::programFinished()
 {
+    running = false;
     ui->stepButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->debugButton->setEnabled(false);
@@ -302,4 +308,51 @@ void MainWindow::on_stepButton_clicked()
     cursor->setCharFormat(*currentCharFormat);
     cursor->clearSelection();
     delete cursor;
+}
+
+void MainWindow::on_startButton_clicked()
+{
+    while (running) {
+        terp->step();
+    }
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    cursor->setCharFormat(*defaultFormat);
+    cursor->clearSelection();
+    delete cursor;
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->setPosition(torus->position());
+    cursor->setPosition(torus->position()+1, QTextCursor::KeepAnchor);
+    cursor->setCharFormat(*currentCharFormat);
+    cursor->clearSelection();
+    delete cursor;
+}
+
+void MainWindow::on_speedBox_valueChanged(int arg1)
+{
+    slowTime = arg1;
+}
+
+void MainWindow::on_slowButton_clicked()
+{
+    running = !running;
+    if (running) {
+        ui->slowButton->setText(QString("Stop"));
+        while (running) {
+            on_stepButton_clicked();
+
+            //update the UI
+            this->repaint();
+            qApp->processEvents();
+
+            //wait for the desired amount of time
+            std::this_thread::sleep_for(std::chrono::milliseconds(slowTime));
+        }
+        ui->slowButton->setText(QString("Slow"));
+    }
+    else {
+        ui->slowButton->setText(QString("Slow"));
+        this->repaint();
+        qApp->processEvents();
+    }
 }
