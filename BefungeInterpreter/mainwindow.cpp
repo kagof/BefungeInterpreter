@@ -110,6 +110,7 @@ char MainWindow::inputChar()
 {
     //don't allow user to leave this mode
     ui->inputSubmitButton->setEnabled(true);
+    ui->LFButton->setEnabled(true);
     ui->startButton->setEnabled(false);
     ui->debugButton->setEnabled(false);
     ui->stepButton->setEnabled(false);
@@ -133,6 +134,7 @@ char MainWindow::inputChar()
             ui->inputBox->clear();
             submitted = false;
             ui->inputSubmitButton->setEnabled(false);
+            ui->LFButton->setEnabled(false);
             ui->startButton->setEnabled(true);
             ui->debugButton->setEnabled(true);
             ui->stepButton->setEnabled(true);
@@ -475,5 +477,11 @@ void MainWindow::on_slowButton_clicked()
 
 void MainWindow::on_inputSubmitButton_clicked()
 {
+    submitted = true;
+}
+
+void MainWindow::on_LFButton_clicked()
+{
+    ui->inputBox->setText(QString("\n"));
     submitted = true;
 }

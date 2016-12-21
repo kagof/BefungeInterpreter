@@ -74,6 +74,8 @@ private slots:
 
     void on_inputSubmitButton_clicked();
 
+    void on_LFButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
