@@ -42,7 +42,7 @@ bool File::loadFile() {
     //input into the UI
     while (in.is_open() && std::getline(in, currentLine)){
         int i;
-        for (i = 0; i < currentLine.length(); i++){
+        for (i = 0; i < (int)currentLine.length(); i++){
             parent->addToSourceBox(currentLine.at(i));
         }
         while (i < width){

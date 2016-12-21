@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     MainWindow w;
 
     if (testmode){
-        CodeTorus* t;
+        CodeTorus* t = new CodeTorus(&w,0,0,QString(" "));
         Interpreter i(&w, t);
         i.push('a');
         i.push('f');
