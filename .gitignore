@@ -2,3 +2,5 @@ build-*
 *.pro.user
 
 *.idea
+
+*.svg
