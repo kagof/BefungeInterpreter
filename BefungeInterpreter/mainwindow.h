@@ -30,6 +30,8 @@ public:
     void output(int i);
 
     void programFinished();
+    void invalidCharDialog(char c);
+
     bool isRunning();
     bool isStarted();
     char inputChar();
@@ -75,6 +77,10 @@ private slots:
     void on_inputSubmitButton_clicked();
 
     void on_LFButton_clicked();
+
+    void on_actionIgnore_triggered(bool checked);
+
+    void on_actionReflect_triggered(bool checked);
 
 private:
     Ui::MainWindow *ui;

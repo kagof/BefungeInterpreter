@@ -13,14 +13,17 @@
 class Interpreter
 {
 public:
+    enum unsupportedCharMode{ABORT, IGNORE, REFLECT};
     Interpreter(MainWindow *parent, CodeTorus *torus);
     void step();
     QString stackToQString();
     void push(char c);
     char pop();
     QString getOutputStr();
+    void setUnsupportedCharMode(unsupportedCharMode md);
 
 private:
+    unsupportedCharMode unsupCharMode;
     bool stringmode;
     MainWindow* parent;
     CodeTorus* torus;

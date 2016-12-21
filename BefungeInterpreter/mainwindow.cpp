@@ -96,6 +96,15 @@ void MainWindow::programFinished()
     qApp->processEvents();
 }
 
+void MainWindow::invalidCharDialog(char c)
+{
+    QString msg("Invalid character '");
+    msg.append(QChar(c));
+    msg.append("' hit.");
+    QMessageBox* box = new QMessageBox(QMessageBox::Warning, QString("Invalid"), msg, QMessageBox::Ok, this);
+    box->exec();
+}
+
 bool MainWindow::isRunning()
 {
     return running;
@@ -279,6 +288,10 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         //create the interpreter
         terp = new Interpreter(this, torus);
 
+        //set the unsupported character mode (constructor defaults to ABORT)
+        if (ui->actionIgnore->isChecked()) terp->setUnsupportedCharMode(Interpreter::IGNORE);
+        if (ui->actionReflect->isChecked()) terp->setUnsupportedCharMode(Interpreter::REFLECT);
+
         //highlight the first element
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->setPosition(1, QTextCursor::KeepAnchor);
@@ -295,6 +308,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
 
     }
     else {
+        //clean up
         mode = EDIT;
         ui->stackBox->clear();
         ui->inputBox->clear();
@@ -302,6 +316,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         delete torus;
         delete terp;
 
+        //get rid of the highlighted current PC
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
         cursor->setCharFormat(*defaultFormat);
@@ -484,4 +499,36 @@ void MainWindow::on_LFButton_clicked()
 {
     ui->inputBox->setText(QString("\n"));
     submitted = true;
+}
+
+void MainWindow::on_actionIgnore_triggered(bool checked)
+{
+    if (checked){
+        ui->actionReflect->setChecked(false);
+        if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::IGNORE);
+    }
+    else {
+        if (ui->actionReflect->isChecked()){
+            if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::REFLECT);
+        }
+        else {
+            if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::ABORT);
+        }
+    }
+}
+
+void MainWindow::on_actionReflect_triggered(bool checked)
+{
+    if (checked) {
+        ui->actionIgnore->setChecked(false);
+        if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::REFLECT);
+    }
+    else {
+        if (ui->actionIgnore->isChecked()){
+            if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::IGNORE);
+        }
+        else {
+            if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::ABORT);
+        }
+    }
 }

@@ -15,6 +15,7 @@ public:
     void putChar(char c, int row, int col);
     void setChars(QString chars);
     void changeDirection(direction newDrctn);
+    void reflectDirection();
     int getX();
     int getY();
     int position();

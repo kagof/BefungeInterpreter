@@ -49,6 +49,14 @@ void CodeTorus::changeDirection(direction newDrctn)
     this->drctn = newDrctn;
 }
 
+void CodeTorus::reflectDirection()
+{
+    if (drctn == UP) drctn = DOWN;
+    else if (drctn == DOWN) drctn = UP;
+    else if (drctn == LEFT) drctn = RIGHT;
+    else if (drctn == RIGHT) drctn = LEFT;
+}
+
 int CodeTorus::getX()
 {
     return x;

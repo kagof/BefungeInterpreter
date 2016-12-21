@@ -12,7 +12,7 @@ Interpreter::Interpreter(MainWindow *parent, CodeTorus *torus)
     this->torus = torus;
     st = new std::stack<char>();
     stringmode = false;
-    outputStr;
+    unsupCharMode = ABORT;
 
     //create and seed a random number generator for '?'
     std::mt19937 rand_gen(std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -251,6 +251,23 @@ void Interpreter::step()
     }
     }
     //TODO: if we get here then we hit an invalid character.
+    switch (unsupCharMode) {
+
+    case(ABORT): {
+        parent->programFinished();
+        parent->invalidCharDialog(c);
+        return;
+    }
+    case(IGNORE): {
+        torus->next();
+        return;
+    }
+    case(REFLECT): {
+        torus->reflectDirection();
+        torus->next();
+        return;
+    }
+    }
 }
 
 QString Interpreter::stackToQString()
@@ -330,6 +347,11 @@ char Interpreter::pop()
 QString Interpreter::getOutputStr()
 {
     return outputStr;
+}
+
+void Interpreter::setUnsupportedCharMode(Interpreter::unsupportedCharMode md)
+{
+    this->unsupCharMode = md;
 }
 
 void Interpreter::output(char c)

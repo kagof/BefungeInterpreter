@@ -399,8 +399,22 @@
     <addaction name="separator"/>
     <addaction name="actionOverwrite_Mode"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QMenu" name="menuUnsupported_Chars">
+     <property name="title">
+      <string>Unsupported Chars</string>
+     </property>
+     <addaction name="actionIgnore"/>
+     <addaction name="actionReflect"/>
+    </widget>
+    <addaction name="menuUnsupported_Chars"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuOptions"/>
   </widget>
   <action name="actionLoad_File">
    <property name="text">
@@ -472,6 +486,22 @@
    </property>
    <property name="text">
     <string>Overwrite Mode</string>
+   </property>
+  </action>
+  <action name="actionIgnore">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ignore</string>
+   </property>
+  </action>
+  <action name="actionReflect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Reflect</string>
    </property>
   </action>
  </widget>
