@@ -33,7 +33,7 @@ The easiest way to build this project is to clone this repository and build it a
 
 ## Testing
 
-This interpreter was tested against the Befunge-93 parts of the [Mycology test suite](https://github.com/Deewiant/Mycology), and the few test files in the [*eg* folder](https://github.com/catseye/Befunge-93/tree/master/eg) of the reference implementation
+This interpreter was tested against the Befunge-93 parts of the [Mycology test suite](https://github.com/Deewiant/Mycology), and the few test files in the [*eg* folder](https://github.com/catseye/Befunge-93/tree/master/eg) of the reference implementation.
 
 ## Differences from Canonical Befunge-93
 
@@ -69,6 +69,7 @@ These features should be implemented in the future:
 * Syntax highlighting
 * Allow input of longer strings, taking only first character, then the next, etc.
 * Reset button. Currently the user must toggle between edit and run mode to reset the code torus.
+* Debug mode. Currently the button does nothing.
 
 ## Version History
 
