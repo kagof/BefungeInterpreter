@@ -36,6 +36,10 @@ MainWindow::MainWindow(QWidget *parent) :
     currentCharFormat->setBackground(QBrush(Qt::cyan));
 
     ui->sourceBox->setWordWrapMode(QTextOption::NoWrap);
+    ui->inputBox->setReadOnly(true);
+    ui->inputBox->setEnabled(false);
+    ui->sourceBox->setFocus();
+
     defaultFormat = new QTextCharFormat(ui->sourceBox->currentCharFormat());
 
     mode = EDIT;
@@ -134,9 +138,14 @@ bool MainWindow::isStarted()
 
 char MainWindow::inputChar()
 {
-    //don't allow user to leave this mode
+    ui->inputBox->setEnabled(true);
+    ui->inputBox->setReadOnly(false);
+    ui->inputBox->grabKeyboard();
+    ui->inputBox->setFocus();
     ui->inputSubmitButton->setEnabled(true);
     ui->LFButton->setEnabled(true);
+
+    //don't allow user to leave this mode
     ui->startButton->setEnabled(false);
     ui->debugButton->setEnabled(false);
     ui->stepButton->setEnabled(false);
@@ -159,6 +168,9 @@ char MainWindow::inputChar()
             ui->inputLabel->setText(QString("Input"));
             ui->inputBox->clear();
             submitted = false;
+            ui->inputBox->setEnabled(false);
+            ui->inputBox->setReadOnly(true);
+            ui->inputBox->releaseKeyboard();
             ui->inputSubmitButton->setEnabled(false);
             ui->LFButton->setEnabled(false);
             ui->startButton->setEnabled(true);
@@ -180,9 +192,14 @@ char MainWindow::inputChar()
 
 int MainWindow::inputInt()
 {
-    //don't allow user to leave this mode
+    ui->inputBox->setEnabled(true);
+    ui->inputBox->setReadOnly(false);
+    ui->inputBox->grabKeyboard();
+    ui->inputBox->setFocus();
     ui->inputSubmitButton->setEnabled(true);
     ui->startButton->setEnabled(false);
+
+    //don't allow user to leave this mode
     ui->debugButton->setEnabled(false);
     ui->stepButton->setEnabled(false);
     ui->slowButton->setEnabled(false);
@@ -207,6 +224,9 @@ int MainWindow::inputInt()
             ui->inputLabel->setText(QString("Input"));
             ui->inputBox->clear();
             submitted = false;
+            ui->inputBox->setEnabled(false);
+            ui->inputBox->setReadOnly(true);
+            ui->inputBox->releaseKeyboard();
             ui->inputSubmitButton->setEnabled(false);
             ui->startButton->setEnabled(true);
             ui->debugButton->setEnabled(true);
@@ -351,6 +371,10 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
 
         if (!keepRuntimeChanges) ui->sourceBox->setPlainText(tmpOriginalProgram);
         tmpOriginalProgram.clear();
+
+        //grab keyboard
+        ui->sourceBox->grabKeyboard();
+        ui->sourceBox->setFocus();
 
         //get rid of the highlighted current PC
         cursor = new QTextCursor(ui->sourceBox->document());
