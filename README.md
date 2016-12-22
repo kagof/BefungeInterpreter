@@ -47,7 +47,9 @@ This interpreter only accepts the traditional Befunge-93 instructions, however t
 	
 	Note that the [reference implementation](https://github.com/catseye/Befunge-93/blob/master/src/bef.c) of Befunge offers the first two options, and the [Mycology test suite](https://github.com/Deewiant/Mycology)'s [*sanity.bf*](https://github.com/Deewiant/Mycology/blob/master/sanity.bf) expects the last.
 * Integer and character input *only* accept an integer or character, respectively. Only a single character is accepted as character input in this version.
-* The size of characters and integers is not specified in the [official Befunge-93 specifications](http://catseye.tc/view/befunge-93/doc/Befunge-93.markdown), but they are undoubtedly smaller than what this interpreter allows.
+* The size of characters and integers is not specified in the [official Befunge-93 specifications](http://catseye.tc/view/befunge-93/doc/Befunge-93.markdown). The stack in this interpreter stores information as chars, so the integers are contained in [-128,127], and overflows are allowed, as is shown in this fizzbuzz example:
+
+<p align="center"><img src="https://github.com/kagof/BefungeInterpreter/blob/master/Screenshots/kbfi1-0-0-screenshot-fizzbuzz.PNG"></p>
 
 ## Sample Code
 
