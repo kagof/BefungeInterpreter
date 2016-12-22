@@ -25,6 +25,7 @@ public:
 
     void addToSourceBox(char c);
     void setSourceBoxText(QString s);
+    QString getSourceBoxText();
     void setStackBoxText(QString s);
     void output(char c);
     void output(int i);
@@ -60,7 +61,11 @@ private slots:
 
     void on_sourceBox_undoAvailable(bool b);
 
+    void on_menuFile_aboutToShow();
+
     void on_menuEdit_aboutToShow();
+
+    void on_menuOptions_aboutToShow();
 
     void on_sourceBox_modificationChanged(bool arg1);
 
@@ -82,6 +87,16 @@ private slots:
 
     void on_actionReflect_triggered(bool checked);
 
+    void on_actionSave_File_triggered();
+
+    void on_actionKeep_Padding_From_Run_triggered(bool checked);
+
+    void on_actionKeep_Runtime_Changes_triggered(bool checked);
+
+    void on_actionSave_File_As_triggered();
+
+    void on_actionClose_File_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -95,9 +110,16 @@ private:
     QTextCharFormat *defaultFormat;
     QTextCursor *cursor;
 
+    QString tmpOriginalProgram;
+
+    bool keepPadding;
+    bool keepRuntimeChanges;
+
+    bool savePrompt;
     bool fileIsOpen;
     Mode mode;
     bool undo, redo, copy;
+    bool modified;
     bool running;
     bool started;
     bool submitted;

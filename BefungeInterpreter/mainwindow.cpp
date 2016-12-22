@@ -39,12 +39,18 @@ MainWindow::MainWindow(QWidget *parent) :
     defaultFormat = new QTextCharFormat(ui->sourceBox->currentCharFormat());
 
     mode = EDIT;
+    savePrompt = false;
     fileIsOpen = false;
+
+    keepPadding = true;
+    keepRuntimeChanges = false;
+
     undo = false;
     redo = false;
     copy = false;
     slowTime = ui->speedBox->value();
 
+    modified = false;
     running = false;
     started = false;
     submitted = false;
@@ -64,6 +70,11 @@ void MainWindow::addToSourceBox(char c)
 void MainWindow::setSourceBoxText(QString s)
 {
     ui->sourceBox->setPlainText(s);
+}
+
+QString MainWindow::getSourceBoxText()
+{
+    return ui->sourceBox->toPlainText();
 }
 
 void MainWindow::setStackBoxText(QString s)
@@ -212,13 +223,17 @@ int MainWindow::inputInt()
 
 void MainWindow::on_actionLoad_File_triggered()
 {
+
+    // make sure user is OK with closing current file
+    if (modified || fileIsOpen) on_actionClose_File_triggered();
+
     QString filePath = QFileDialog::getOpenFileName(this,
                                                           "Select Befunge-93 source file to load",
                                                           QDir::currentPath(),
                                                           tr("Befunge file (*.bf);; Befunge-93 file (*.b93);; Text file (*.txt);;  All files (*.*)"));
+
     f = new File(this, filePath);
     fileIsOpen = true;
-    ui->actionSave_File->setEnabled(true);
     ui->sourceBox->document()->setModified(false);
 }
 
@@ -232,6 +247,8 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
 
     //Run Mode:
     if (checked) {
+
+        if (!keepPadding) tmpOriginalProgram = ui->sourceBox->toPlainText();
 
         //if we already opened the file, and haven't changed anything, can use previously obtained values
         if (fileIsOpen && !this->windowTitle().endsWith(QString("*"))) torus = new CodeTorus(this, f->getWidth(), f->getHeight(), ui->sourceBox->toPlainText());
@@ -285,6 +302,9 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
             //create the torus
             torus = new CodeTorus(this, longest, numLines, st);            
         }
+
+        if (keepPadding) tmpOriginalProgram = ui->sourceBox->toPlainText();
+
         //create the interpreter
         terp = new Interpreter(this, torus);
 
@@ -315,6 +335,9 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->outputBox->clear();
         delete torus;
         delete terp;
+
+        if (!keepRuntimeChanges) ui->sourceBox->setPlainText(tmpOriginalProgram);
+        tmpOriginalProgram.clear();
 
         //get rid of the highlighted current PC
         cursor = new QTextCursor(ui->sourceBox->document());
@@ -383,6 +406,19 @@ void MainWindow::on_sourceBox_undoAvailable(bool b)
     undo = b;
 }
 
+void MainWindow::on_menuFile_aboutToShow()
+{
+    bool editmd = (mode == EDIT);
+
+    ui->actionLoad_File->setEnabled(editmd);
+    ui->actionClose_File->setEnabled((editmd && (modified || fileIsOpen)));  // close button only enabled if we are in edit mode,
+                                                                             // and we have modified the text or opened a file.
+    if (fileIsOpen) ui->actionSave_File->setEnabled(editmd);
+    else ui->actionSave_File->setEnabled(false);
+    ui->actionSave_File_As->setEnabled(editmd);
+
+}
+
 void MainWindow::on_menuEdit_aboutToShow()
 {
     ui->actionCopy->setEnabled(copy);
@@ -401,21 +437,38 @@ void MainWindow::on_menuEdit_aboutToShow()
     }
 }
 
+void MainWindow::on_menuOptions_aboutToShow()
+{
+    bool editmd = (mode == EDIT);
+    ui->actionKeep_Padding_From_Run->setEnabled(editmd);
+    ui->actionKeep_Runtime_Changes->setEnabled(editmd);
+}
+
 void MainWindow::on_sourceBox_modificationChanged(bool arg1)
 {
+    // if modified
     if (arg1) {
+        // set title
         if (fileIsOpen) {
             std::string tmpstr = "Kagof Befunge Interpreter - " + f->getFilename() + " *";
             MainWindow::setWindowTitle(QString(tmpstr.c_str()));
         }
         else MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter *"));
+
+        // for enabling save
+        modified = true;
     }
+    // not modified
     else {
+        // set title
         if (fileIsOpen) {
             std::string tmpstr = "Kagof Befunge Interpreter - " + f->getFilename();
             MainWindow::setWindowTitle(QString(tmpstr.c_str()));
         }
         else MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
+
+        //for disabling save
+        modified = false;
     }
 }
 
@@ -530,5 +583,139 @@ void MainWindow::on_actionReflect_triggered(bool checked)
         else {
             if (mode == RUN) terp->setUnsupportedCharMode(Interpreter::ABORT);
         }
+    }
+}
+
+void MainWindow::on_actionSave_File_triggered()
+{
+    if (fileIsOpen) {
+        QString sourceBoxText = ui->sourceBox->toPlainText();
+        if (QFile(f->getDir()).exists()){
+            QMessageBox::StandardButton reply;
+            QString msg("File \"");
+            msg.append(f->getDir());
+            msg.append("\" already exists. Overwrite?");
+            reply = (QMessageBox::StandardButton)QMessageBox::warning(this, "Confirm Overwrite", msg, QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
+            if (reply == QMessageBox::Cancel){
+                return;
+            }
+            else if (reply == QMessageBox::No){
+                on_actionSave_File_As_triggered();
+            }
+            else {
+                if (f->saveFile(sourceBoxText)){
+                    ui->sourceBox->document()->setModified(false);
+                }
+                else QMessageBox::warning(this, "Error", "File failed to save.", QMessageBox::Ok, QMessageBox::Ok);
+            }
+        }
+        else {
+            if (f->saveFile(sourceBoxText)){
+                ui->sourceBox->document()->setModified(false);
+            }
+            else QMessageBox::warning(this, "Error", "File failed to save.", QMessageBox::Ok, QMessageBox::Ok);
+        }
+    }
+}
+
+void MainWindow::on_actionKeep_Padding_From_Run_triggered(bool checked)
+{
+    keepPadding = checked;
+}
+
+void MainWindow::on_actionKeep_Runtime_Changes_triggered(bool checked)
+{
+    keepRuntimeChanges = checked;
+}
+
+void MainWindow::on_actionSave_File_As_triggered()
+{
+    QString sourceBoxText = ui->sourceBox->toPlainText();
+    QString filepath;
+    if (!fileIsOpen) filepath = QFileDialog::getSaveFileName(this, "Save source as...",
+                                                    QDir::currentPath(),
+                                                    tr("Befunge file (*.bf);; Befunge-93 file (*.b93);; Text file (*.txt);;  All files (*.*)"));
+
+    else filepath = QFileDialog::getSaveFileName(this, "Save source as...",
+                                                 QString(f->getFilepath().c_str()),
+                                                 tr("Befunge file (*.bf);; Befunge-93 file (*.b93);; Text file (*.txt);;  All files (*.*)"));
+
+    if (f->saveFileAs(filepath, sourceBoxText)){
+        if (!fileIsOpen) {
+            f = new File(this, filepath);
+            fileIsOpen = true;
+            ui->sourceBox->document()->setModified(false);
+        }
+        else {
+            f->setDir(filepath);
+            f->loadFile();
+            ui->sourceBox->document()->setModified(false);
+        }
+    }
+    else QMessageBox::warning(this, "Error", "File failed to save.", QMessageBox::Ok, QMessageBox::Ok);
+}
+
+void MainWindow::on_actionClose_File_triggered()
+{
+
+    // if the file is open
+    if (fileIsOpen){
+
+        // confirm close
+        QString msg("Close file \"");
+        msg.append(f->getDir());
+        msg.append("\"?");
+        QMessageBox::StandardButton reply;
+        reply = (QMessageBox::StandardButton)QMessageBox::warning(this, "Close File", msg, QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Yes);
+        if (reply == QMessageBox::Yes){
+
+            //if the file was modified, ask if the user wants to save changes before exiting.
+            if (modified){
+                QMessageBox::StandardButton reply2;
+                reply2 = (QMessageBox::StandardButton)QMessageBox::warning(this, "Save File", "Save changes before closing?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
+                if (reply2 == QMessageBox::Yes){
+                    on_actionSave_File_triggered();  // save
+                }
+                else if (reply2 == QMessageBox::Cancel) return;
+            }
+            // close the file
+            delete f;
+            fileIsOpen = false;
+            ui->sourceBox->setPlainText(QString());
+            ui->sourceBox->document()->setModified(false);
+            on_sourceBox_modificationChanged(false);
+
+        }
+        else {
+            return;  // user aborted close
+        }
+    }
+    // file is not open
+    else {
+
+        // confirm close
+        QMessageBox::StandardButton reply;
+        reply = (QMessageBox::StandardButton)QMessageBox::warning(this, "Close File", "Clear source?", QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Yes);
+        if (reply == QMessageBox::Yes){
+
+            //if the file was modified, ask if the user wants to save changes before exiting.
+            if (modified){
+                QMessageBox::StandardButton reply2;
+                reply2 = (QMessageBox::StandardButton)QMessageBox::warning(this, "Save File", "Save changes before closing?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
+                if (reply2 == QMessageBox::Yes){
+                    on_actionSave_File_As_triggered();  // save
+                }
+                else if (reply2 == QMessageBox::Cancel) return;
+            }
+            // clear the source
+            if (fileIsOpen){
+                delete f;
+                fileIsOpen = false;
+            }
+            ui->sourceBox->setPlainText(QString());
+            ui->sourceBox->document()->setModified(false);
+            on_sourceBox_modificationChanged(false);
+        }
+        else return;
     }
 }

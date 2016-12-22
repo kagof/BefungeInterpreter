@@ -1,3 +1,7 @@
+#include <QFile>
+#include <QSaveFile>
+#include <QIODevice>
+
 #include <fstream>
 #include <string>
 #include <ios>
@@ -13,6 +17,30 @@ File::File(MainWindow* parent, QString dir)
     this->loadFile();
 }
 
+bool File::saveFile(QString sourceBoxText)
+{
+    return saveFileAs(dir, sourceBoxText);
+}
+
+bool File::saveFileAs(QString newDir, QString sourceBoxText)
+{
+    QSaveFile file(newDir);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;  // return false if file fails to open
+    }
+    if (-1 == file.write(sourceBoxText.toStdString().c_str())) {
+        return false;  // return false if cannot write text for some reason
+    }
+    bool successful = file.commit();  // return whether the save was successful & closes file
+
+    return successful;
+}
+
+void File::setDir(QString newDir)
+{
+    this->dir = newDir;
+}
+
 bool File::loadFile() {
     width = -1;
     height = 0;
@@ -20,6 +48,9 @@ bool File::loadFile() {
     if (!in.is_open()){
         return false;  // return false if the file failed to open.
     }
+
+    //clear the current source
+    parent->setSourceBoxText(QString());
 
     //get the height & width of the input
     std::string currentLine;
@@ -55,6 +86,7 @@ bool File::loadFile() {
     std::string tmp = dir.toStdString();
 
     std::size_t lastSlash = tmp.find_last_of("/\\");
+    filepath = tmp.substr(0,lastSlash);
     filename = tmp.substr(lastSlash+1);
 
     return true;
@@ -70,7 +102,17 @@ int File::getHeight()
     return height;
 }
 
+QString File::getDir()
+{
+    return dir;
+}
+
 std::string File::getFilename()
 {
     return filename;
+}
+
+std::__cxx11::string File::getFilepath()
+{
+    return filepath;
 }

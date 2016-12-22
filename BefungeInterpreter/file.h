@@ -12,18 +12,23 @@ public:
     static const int DEFAULT_WIDTH = 80;
     static const int DEFAULT_HEIGHT = 25;
     File(MainWindow* parent, QString dir);
-    bool saveFile();
-    bool saveFileAs(QString newDir);
+    bool saveFile(QString sourceBoxText);
+    bool saveFileAs(QString newDir, QString sourceBoxText);
+
+    void setDir(QString newDir);
     bool loadFile();
     int getWidth();
     int getHeight();
+    QString getDir();
     std::string getFilename();
+    std::string getFilepath();
 
 private:
     MainWindow *parent;
     QString dir;
     int width, height;
-    std::string filename;
+    std::string filename, filepath;
+
 };
 
 #endif // FILE_H

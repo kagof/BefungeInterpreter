@@ -385,6 +385,7 @@
     <addaction name="actionSave_File"/>
     <addaction name="actionSave_File_As"/>
     <addaction name="separator"/>
+    <addaction name="actionClose_File"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -411,6 +412,9 @@
      <addaction name="actionReflect"/>
     </widget>
     <addaction name="menuUnsupported_Chars"/>
+    <addaction name="separator"/>
+    <addaction name="actionKeep_Padding_From_Run"/>
+    <addaction name="actionKeep_Runtime_Changes"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -428,6 +432,9 @@
    <property name="text">
     <string>Copy</string>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy selected text from source&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
    </property>
@@ -435,6 +442,9 @@
   <action name="actionCut">
    <property name="text">
     <string>Cut</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cut selected text from source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
@@ -444,6 +454,9 @@
    <property name="text">
     <string>Paste</string>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Paste from clipboard to source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
    </property>
@@ -452,6 +465,9 @@
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo last change to source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
    </property>
@@ -459,6 +475,9 @@
   <action name="actionRedo">
    <property name="text">
     <string>Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Redo last change to source.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
@@ -495,6 +514,9 @@
    <property name="text">
     <string>Ignore</string>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the program counter hits an unsupported BF-93 character, ignore it and continue. If neither this nor &amp;quot;Reflect&amp;quot; are selected, then the program terminates.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </action>
   <action name="actionReflect">
    <property name="checkable">
@@ -502,6 +524,39 @@
    </property>
    <property name="text">
     <string>Reflect</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the program counter hits an unsupported BF-93 character, reflect the direction of movement and continue. If neither this nor &amp;quot;Ignore&amp;quot; are selected, then the program terminates.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionKeep_Padding_From_Run">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Keep Padding From Run</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When you change to run mode, your source code is automatically padded with spaces and newlines as needed. Toggle this to keep this padding or discard (default on).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionKeep_Runtime_Changes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Keep Runtime Changes</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your source code may be edited during the run of the program by the 'p' command. Toggle this to keep these changes (default off).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionClose_File">
+   <property name="text">
+    <string>Close File</string>
    </property>
   </action>
  </widget>
