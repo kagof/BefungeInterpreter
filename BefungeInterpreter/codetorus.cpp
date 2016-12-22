@@ -1,3 +1,15 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                 *
+ *      Kagof Befunge-93 Interpreter v1.0.0        *
+ *        copyright (c) Karl Goffin 2016           *
+ *    released under the open source MIT license   *
+ *                                                 *
+ *   http://github.com/Kagof/BefungeInterpreter    *
+ *                                                 *
+ *                                                 *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
 #include "codetorus.h"
 
 CodeTorus::CodeTorus(MainWindow *parent, int width, int height, QString chars)
