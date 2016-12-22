@@ -46,7 +46,8 @@ This interpreter only accepts the traditional Befunge-93 instructions, however t
 	* **Reflect** - program "bounces" back in opposite direction it was coming from
 	
 	Note that the [reference implementation](https://github.com/catseye/Befunge-93/blob/master/src/bef.c) of Befunge offers the first two options, and the [Mycology test suite](https://github.com/Deewiant/Mycology)'s [*sanity.bf*](https://github.com/Deewiant/Mycology/blob/master/sanity.bf) expects the last.
-* Integer and character input *only* accept an integer or character, respectively. Only a single character is accepted as character input in this version.
+* Integer and character input *only* accept an integer or character, respectively. Only a single character is accepted as character input in this version, although that will probably be changed in future versions.
+* In the Befunge-93 specs, if a user attempts to perform a division by 0, the interpreter is supposed to ask what number the user wanted that to be. Right now, this interpreter just ignores it and moves on. This is expected to change in future versions.
 * The size of characters and integers is not specified in the [official Befunge-93 specifications](http://catseye.tc/view/befunge-93/doc/Befunge-93.markdown). The stack in this interpreter stores information as chars, so the integers are contained in [-128,127], and overflows are allowed, as is shown in this fizzbuzz example:
 
 <p align="center"><img src="https://github.com/kagof/BefungeInterpreter/blob/master/Screenshots/kbfi1-0-0-screenshot-fizzbuzz.PNG"></p>
@@ -62,14 +63,15 @@ Of course, the best way to use Befunge is to write your own programs!
 ## Future Implementations
 
 These features should be implemented in the future:
-* Working keyboard shortcuts listed in the menus
+* Working keyboard shortcuts listed in the menus.
 * Toggle whether to restrict playing field to 80x25 torus
-* Clickable "stop" button when running in "start" mode, instead of crashing on infinite loops
-* Runtime timeout, for the same reason
-* Syntax highlighting
+* Clickable "stop" button when running in "start" mode, instead of crashing on infinite loops.
+* Runtime timeout, for the same reason.
+* Syntax highlighting.
+* Two different modes for handling division by zero (ask for input, or push 0).
 * Allow input of longer strings, taking only first character, then the next, etc.
 * Reset button. Currently the user must toggle between edit and run mode to reset the code torus.
-* Debug mode. Currently the button does nothing.
+* Debug mode (allowing insertions of breakpoints in the code). Currently the button does nothing.
 
 ## Version History
 
