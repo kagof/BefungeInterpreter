@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTextCharFormat>
 #include <QTextCursor>
+#include <random>
 
 class File;
 class CodeTorus;
@@ -37,6 +38,8 @@ public:
     bool isStarted();
     char inputChar();
     int inputInt();
+
+    int randomBetweenOneAndThree();
 
 private slots:
     void on_actionLoad_File_triggered();
@@ -111,6 +114,8 @@ private:
     QTextCursor *cursor;
 
     QString tmpOriginalProgram;
+
+    std::mt19937 rand_gen;
 
     bool keepPadding;
     bool keepRuntimeChanges;

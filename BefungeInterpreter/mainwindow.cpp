@@ -55,6 +55,12 @@ MainWindow::MainWindow(QWidget *parent) :
     started = false;
     submitted = false;
 
+
+    // create and seed a random number generator for '?'
+    // the random number generator is hosted in MainWindow because the Interpreter is deleted whenever we go to edit mode.
+    rand_gen();
+    rand_gen.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+
 }
 
 MainWindow::~MainWindow()
@@ -218,6 +224,13 @@ int MainWindow::inputInt()
             box->exec();
         }
     }
+}
+
+int MainWindow::randomBetweenOneAndThree()
+{
+    std::uniform_int_distribution<> range(0, 3);
+    int val = range(rand_gen);
+    return val;
 }
 
 
