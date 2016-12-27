@@ -70,7 +70,7 @@ These features should be implemented in the future:
 * Syntax highlighting.
 * Two different modes for handling division by zero (ask for input, or push 0).
 * Allow input of longer strings, taking only first character, then the next, etc.
-* Reset button. Currently the user must toggle between edit and run mode to reset the code torus.
+* ~~Reset button. Currently the user must toggle between edit and run mode to reset the code torus.~~ ✓
 * Debug mode (allowing insertions of breakpoints in the code). Currently the button does nothing.
 
 ## Version History

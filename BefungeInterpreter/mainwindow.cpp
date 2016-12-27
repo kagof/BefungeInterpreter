@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     running = false;
     started = false;
     submitted = false;
+    resettable = false;
 
 
     // create and seed a random number generator for '?'
@@ -121,7 +122,11 @@ void MainWindow::programFinished()
     started = false;
     ui->editRadioButton->setEnabled(true);
     ui->stepButton->setEnabled(false);
-    ui->startButton->setEnabled(false);
+
+    ui->startButton->setEnabled(true);
+    ui->startButton->setText("Reset");
+    resettable = true;
+
     ui->debugButton->setEnabled(false);
     ui->slowButton->setEnabled(false);
 
@@ -544,6 +549,17 @@ void MainWindow::on_stepButton_clicked()
 
 void MainWindow::on_startButton_clicked()
 {
+
+    // if resettable is true, then the start button is functioning as the reset button.
+    if (resettable) {
+        // toggling the "run" radio button resets the program
+        on_runRadioButton_toggled(false);
+        on_runRadioButton_toggled(true);
+        ui->startButton->setText("Start");
+        resettable = false;
+        return;
+    }
+
     started = !started;
     while (started) {
         terp->step();

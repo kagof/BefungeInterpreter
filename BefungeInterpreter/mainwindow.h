@@ -140,6 +140,7 @@ private:
     bool running;
     bool started;
     bool submitted;
+    bool resettable;
 };
 
 #endif // MAINWINDOW_H
