@@ -75,7 +75,7 @@ These features should be implemented in the future:
 
 ## Version History
 
-* Kagof Befunge-93 Interpreter v1.0.0
+* Kagof Befunge-93 Interpreter [v1.0.0](https://github.com/kagof/BefungeInterpreter/tree/08720162ecccd65ef653ac339eb89af98a8be23c)
 	- initial release
 	- there will be bugs
 
