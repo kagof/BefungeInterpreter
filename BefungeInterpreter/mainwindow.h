@@ -112,6 +112,16 @@ private slots:
 
     void on_actionClose_File_triggered();
 
+    void on_actionAsk_For_Input_triggered(bool checked);
+
+    void on_actionPush_Zero_triggered(bool checked);
+
+    void on_actionAsk_For_Input_2_triggered(bool checked);
+
+    void on_actionPush_Zero_2_triggered(bool checked);
+
+    void on_actionCrash_triggered(bool checked);
+
 private:
     Ui::MainWindow *ui;
 

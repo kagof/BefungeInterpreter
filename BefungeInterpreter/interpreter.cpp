@@ -25,6 +25,8 @@ Interpreter::Interpreter(MainWindow *parent, CodeTorus *torus)
     st = new std::stack<char>();
     stringmode = false;
     unsupCharMode = ABORT;
+    divideByZeroMode = ASK;
+    modByZeroMode = ASK;
 
 }
 
@@ -67,6 +69,7 @@ void Interpreter::step()
         int a = (int) pop();
         int b = (int) pop();
         if (a!=0) push((char)(b/a));
+        else handleDivideByZero();
         //TODO: else: ask for input if a=0
         torus->next();
         return;
@@ -74,7 +77,8 @@ void Interpreter::step()
     case('%'): {  // modulo
         int a = (int) pop();
         int b = (int) pop();
-        push((char)(b%a));
+        if (a != 0) push((char)(b % a));
+        else handleModulusZero(a, b);
         torus->next();
         return;
     }
@@ -361,6 +365,50 @@ QString Interpreter::getOutputStr()
 void Interpreter::setUnsupportedCharMode(Interpreter::unsupportedCharMode md)
 {
     this->unsupCharMode = md;
+}
+
+void Interpreter::setDivZeroMode(Interpreter::divideOrModByZeroMode md)
+{
+    this->divideByZeroMode = md;
+}
+
+void Interpreter::setModZeroMode(Interpreter::divideOrModByZeroMode md)
+{
+    this->modByZeroMode = md;
+}
+
+void Interpreter::handleDivideByZero()
+{
+    switch(divideByZeroMode) {
+    case(ASK):{
+        int i = parent->inputInt();
+        push((char)i);
+        return;
+    }
+    case(PUSHZERO):{
+        push((char)0);
+        return;
+    }
+    }
+}
+
+void Interpreter::handleModulusZero(int a, int b)
+{
+    switch(modByZeroMode) {
+    case(ASK):{
+        int i = parent->inputInt();
+        push((char)i);
+        return;
+    }
+    case(PUSHZERO):{
+        push((char)0);
+        return;
+    }
+    case(CRASH):{
+        push((char)(b % a));  // this will make the program crash
+        return;
+    }
+    }
 }
 
 void Interpreter::output(char c)

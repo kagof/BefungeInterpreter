@@ -383,6 +383,9 @@
     <property name="title">
      <string>File</string>
     </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
     <addaction name="actionLoad_File"/>
     <addaction name="separator"/>
     <addaction name="actionSave_File"/>
@@ -393,6 +396,9 @@
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
     <addaction name="actionCopy"/>
     <addaction name="actionCut"/>
@@ -407,14 +413,53 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
     <widget class="QMenu" name="menuUnsupported_Chars">
      <property name="title">
       <string>Unsupported Chars</string>
      </property>
+     <property name="toolTipsVisible">
+      <bool>true</bool>
+     </property>
      <addaction name="actionIgnore"/>
      <addaction name="actionReflect"/>
     </widget>
+    <widget class="QMenu" name="menuDivision_Modulus_by_Zero">
+     <property name="title">
+      <string>Division/Modulus by Zero</string>
+     </property>
+     <property name="toolTipsVisible">
+      <bool>true</bool>
+     </property>
+     <widget class="QMenu" name="menuDivision">
+      <property name="title">
+       <string>Division</string>
+      </property>
+      <property name="toolTipsVisible">
+       <bool>true</bool>
+      </property>
+      <addaction name="actionAsk_For_Input"/>
+      <addaction name="actionPush_Zero"/>
+     </widget>
+     <widget class="QMenu" name="menuModulus">
+      <property name="title">
+       <string>Modulus</string>
+      </property>
+      <property name="toolTipsVisible">
+       <bool>true</bool>
+      </property>
+      <addaction name="actionAsk_For_Input_2"/>
+      <addaction name="actionPush_Zero_2"/>
+      <addaction name="actionCrash"/>
+     </widget>
+     <addaction name="menuDivision"/>
+     <addaction name="menuModulus"/>
+    </widget>
     <addaction name="menuUnsupported_Chars"/>
+    <addaction name="separator"/>
+    <addaction name="menuDivision_Modulus_by_Zero"/>
     <addaction name="separator"/>
     <addaction name="actionKeep_Padding_From_Run"/>
     <addaction name="actionKeep_Runtime_Changes"/>
@@ -560,6 +605,55 @@
   <action name="actionClose_File">
    <property name="text">
     <string>Close File</string>
+   </property>
+  </action>
+  <action name="actionAsk_For_Input">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ask For Input</string>
+   </property>
+  </action>
+  <action name="actionPush_Zero">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Push Zero</string>
+   </property>
+  </action>
+  <action name="actionAsk_For_Input_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ask For Input</string>
+   </property>
+  </action>
+  <action name="actionPush_Zero_2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Push Zero</string>
+   </property>
+  </action>
+  <action name="actionCrash">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Crash</string>
+   </property>
+   <property name="toolTip">
+    <string>Yes, this is a silly option. But this is what happens in the official Befunge-93 reference distribution, so I am giving the option.  Warning: if you enter this mode and perform a modulus by zero, you will lose all unsaved changes!</string>
    </property>
   </action>
  </widget>

@@ -362,6 +362,11 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         if (ui->actionIgnore->isChecked()) terp->setUnsupportedCharMode(Interpreter::IGNORE);
         if (ui->actionReflect->isChecked()) terp->setUnsupportedCharMode(Interpreter::REFLECT);
 
+        //set the division & modulus by zero mode (constructor defaults to ASK for both)
+        if (ui->actionPush_Zero->isChecked()) terp->setDivZeroMode(Interpreter::PUSHZERO);
+        if (ui->actionPush_Zero_2->isChecked()) terp->setModZeroMode(Interpreter::PUSHZERO);
+        if (ui->actionCrash->isChecked()) terp->setModZeroMode(Interpreter::CRASH);
+
         //highlight the first element
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->setPosition(1, QTextCursor::KeepAnchor);
@@ -782,5 +787,68 @@ void MainWindow::on_actionClose_File_triggered()
             on_sourceBox_modificationChanged(false);
         }
         else return;
+    }
+}
+
+void MainWindow::on_actionAsk_For_Input_triggered(bool checked)
+{
+    if (checked) {
+        ui->actionPush_Zero->setChecked(false);
+        if (mode == RUN) terp->setDivZeroMode(Interpreter::ASK);
+    }
+    else {
+        ui->actionAsk_For_Input->setChecked(true);  // this is the default option, so the only way to uncheck is by selecting the other option.
+        on_actionAsk_For_Input_triggered(true);
+    }
+}
+
+void MainWindow::on_actionPush_Zero_triggered(bool checked)
+{
+    if (checked) {
+        ui->actionAsk_For_Input->setChecked(false);
+        if (mode == RUN) terp->setDivZeroMode(Interpreter::PUSHZERO);
+    }
+    else {
+        ui->actionAsk_For_Input->setChecked(true);
+        on_actionAsk_For_Input_triggered(true);
+    }
+}
+
+void MainWindow::on_actionAsk_For_Input_2_triggered(bool checked)
+{
+    if (checked) {
+        ui->actionPush_Zero_2->setChecked(false);
+        ui->actionCrash->setChecked(false);
+        if (mode == RUN) terp->setModZeroMode(Interpreter::ASK);
+    }
+    else {
+        ui->actionAsk_For_Input_2->setChecked(true);  // this is the default option, so the only way to uncheck is by selecting another option.
+        on_actionAsk_For_Input_2_triggered(true);
+    }
+}
+
+void MainWindow::on_actionPush_Zero_2_triggered(bool checked)
+{
+    if (checked) {
+        ui->actionAsk_For_Input_2->setChecked(false);
+        ui->actionCrash->setChecked(false);
+        if (mode == RUN) terp->setModZeroMode(Interpreter::PUSHZERO);
+    }
+    else {
+        ui->actionAsk_For_Input_2->setChecked(true);
+        on_actionAsk_For_Input_2_triggered(true);
+    }
+}
+
+void MainWindow::on_actionCrash_triggered(bool checked)
+{
+    if (checked) {
+        ui->actionAsk_For_Input_2->setChecked(false);
+        ui->actionPush_Zero_2->setChecked(false);
+        if (mode == RUN) terp->setModZeroMode(Interpreter::CRASH);
+    }
+    else {
+        ui->actionAsk_For_Input_2->setChecked(true);
+        on_actionAsk_For_Input_2_triggered(true);
     }
 }

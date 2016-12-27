@@ -25,6 +25,7 @@ class Interpreter
 {
 public:
     enum unsupportedCharMode{ABORT, IGNORE, REFLECT};
+    enum divideOrModByZeroMode{ASK, PUSHZERO, CRASH};
     Interpreter(MainWindow *parent, CodeTorus *torus);
     void step();
     QString stackToQString();
@@ -32,14 +33,20 @@ public:
     char pop();
     QString getOutputStr();
     void setUnsupportedCharMode(unsupportedCharMode md);
+    void setDivZeroMode(divideOrModByZeroMode md);
+    void setModZeroMode(divideOrModByZeroMode md);
 
 private:
     unsupportedCharMode unsupCharMode;
+    divideOrModByZeroMode divideByZeroMode;
+    divideOrModByZeroMode modByZeroMode;
     bool stringmode;
     MainWindow* parent;
     CodeTorus* torus;
     std::stack<char>* st;
     QString outputStr;
+    void handleDivideByZero();
+    void handleModulusZero(int a, int b);
     void output(char c);
     void output(int i);
 
