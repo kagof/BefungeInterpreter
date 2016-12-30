@@ -29,6 +29,8 @@
 #include <thread>
 #include <stdexcept>
 
+
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "file.h"
@@ -119,6 +121,8 @@ void MainWindow::output(int i)
 void MainWindow::programFinished()
 {
     if (started) ui->outputBox->setPlainText(QString(terp->getOutputStr()));
+    if (started) ui->stackBox->setPlainText(terp->stackToQString());
+    this->setCursor(Qt::ArrowCursor);
     running = false;
     started = false;
     ui->editRadioButton->setEnabled(true);
@@ -264,7 +268,7 @@ int MainWindow::inputInt()
     }
 }
 
-int MainWindow::randomBetweenOneAndThree()
+int MainWindow::randomBetweenZeroAndThree()
 {
     std::uniform_int_distribution<> range(0, 3);
     int val = range(rand_gen);
@@ -306,11 +310,12 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
 
         else{
             QString st = ui->sourceBox->toPlainText();
-
+            bool changedThings = false;
             //ending with a newline character. the upcoming for loop does not work without it
             if (!st.endsWith("\n")) {
                 st.append(QChar('\n'));
                 this->setSourceBoxText(st);
+                if (keepPadding) changedThings = true;
             }
 
             //find the width and height of this text
@@ -338,6 +343,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
             for (QStringList::iterator it = sl.begin(); it != sl.end(); it++) {
                 while (it->length() < longest){
                     it->append(QChar(' '));
+                    if (!changedThings && keepPadding) changedThings = true;
                 }
             }
 
@@ -349,6 +355,8 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
                 this->setSourceBoxText(st);
             }
             this->setSourceBoxText(st);
+            if (changedThings) ui->sourceBox->document()->setModified(true);
+            else ui->sourceBox->document()->setModified(false);
 
             //create the torus
             torus = new CodeTorus(this, longest, numLines, st);            
@@ -369,11 +377,13 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         if (ui->actionCrash->isChecked()) terp->setModZeroMode(Interpreter::CRASH);
 
         //highlight the first element
+        bool tmpModified = modified;
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->setPosition(1, QTextCursor::KeepAnchor);
         cursor->setCharFormat(*currentCharFormat);
         cursor->clearSelection();
         delete cursor;
+        ui->sourceBox->document()->setModified(tmpModified);
 
         //we don't want the user to try to manually edit the source text when in run mode
         mode = RUN;
@@ -400,13 +410,15 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->sourceBox->setFocus();
 
         //get rid of the highlighted current PC
+        bool tmpModified = modified;
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
         cursor->setCharFormat(*defaultFormat);
         cursor->clearSelection();
         delete cursor;
+        ui->sourceBox->document()->setModified(tmpModified);
     }
-    ui->sourceBox->setUndoRedoEnabled(checked);
+    ui->sourceBox->setUndoRedoEnabled(!checked);
 
     ui->startButton->setEnabled(checked);
     ui->debugButton->setEnabled(checked);
@@ -540,6 +552,7 @@ void MainWindow::on_actionOverwrite_Mode_triggered(bool checked)
 void MainWindow::on_stepButton_clicked()
 {
     terp->step();
+    bool tmpModified = modified;
     cursor = new QTextCursor(ui->sourceBox->document());
     cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
     cursor->setCharFormat(*defaultFormat);
@@ -551,6 +564,7 @@ void MainWindow::on_stepButton_clicked()
     cursor->setCharFormat(*currentCharFormat);
     cursor->clearSelection();
     delete cursor;
+    ui->sourceBox->document()->setModified(tmpModified);
 }
 
 void MainWindow::on_startButton_clicked()
@@ -566,10 +580,48 @@ void MainWindow::on_startButton_clicked()
         return;
     }
 
-    started = !started;
-    while (started) {
-        terp->step();
+    if (started) {  // user clicked the stop button
+        ui->startButton->setText("Start");
+        ui->startButton->setEnabled(false);
+        this->setCursor(Qt::WaitCursor);
+        qApp->processEvents();
+        this->repaint();
+        running = false;
+        ui->outputBox->setPlainText(QString(terp->getOutputStr()));
+        ui->stackBox->setPlainText(terp->stackToQString());
+        ui->startButton->setEnabled(true);
+        ui->debugButton->setEnabled(true);
+        ui->stepButton->setEnabled(true);
+        ui->editRadioButton->setEnabled(true);
+        ui->slowButton->setEnabled(true);
+        this->setCursor(Qt::ArrowCursor);
+        qApp->processEvents();
+        this->repaint();
     }
+
+    started = !started;
+    if (started) {
+        this->setCursor(Qt::BusyCursor);
+        ui->startButton->setText("Stop");
+        ui->debugButton->setEnabled(false);
+        ui->editRadioButton->setEnabled(false);
+        ui->stepButton->setEnabled(false);
+        ui->slowButton->setEnabled(false);
+        qApp->processEvents();
+        this->repaint();
+        std::time_t startTime = std::time(0);
+        std::time_t now;
+        while (started) {
+            terp->step();
+            std::time(&now);
+            if (difftime(now, startTime) > 0.2){
+                qApp->processEvents();
+                startTime = std::time(0);
+            }
+        }
+    }
+
+    bool tmpModified = modified;
     cursor = new QTextCursor(ui->sourceBox->document());
     cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
     cursor->setCharFormat(*defaultFormat);
@@ -581,6 +633,7 @@ void MainWindow::on_startButton_clicked()
     cursor->setCharFormat(*currentCharFormat);
     cursor->clearSelection();
     delete cursor;
+    ui->sourceBox->document()->setModified(tmpModified);
 }
 
 void MainWindow::on_speedBox_valueChanged(int arg1)
@@ -745,6 +798,7 @@ void MainWindow::on_actionClose_File_triggered()
                 QMessageBox::StandardButton reply2;
                 reply2 = (QMessageBox::StandardButton)QMessageBox::warning(this, "Save File", "Save changes before closing?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
                 if (reply2 == QMessageBox::Yes){
+                    if (mode == RUN && !keepRuntimeChanges)ui->sourceBox->setPlainText(tmpOriginalProgram);  // this will only happen if the user clicked the x in run mode, and the user did not want to keep the runtime changes
                     on_actionSave_File_triggered();  // save
                 }
                 else if (reply2 == QMessageBox::Cancel) return;
@@ -774,6 +828,7 @@ void MainWindow::on_actionClose_File_triggered()
                 QMessageBox::StandardButton reply2;
                 reply2 = (QMessageBox::StandardButton)QMessageBox::warning(this, "Save File", "Save changes before closing?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
                 if (reply2 == QMessageBox::Yes){
+                    if (mode == RUN && !keepRuntimeChanges)ui->sourceBox->setPlainText(tmpOriginalProgram);  // this will only happen if the user clicked the x in run mode, and the user did not want to keep the runtime changes
                     on_actionSave_File_As_triggered();  // save
                 }
                 else if (reply2 == QMessageBox::Cancel) return;

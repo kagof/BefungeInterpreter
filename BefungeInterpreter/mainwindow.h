@@ -51,7 +51,7 @@ public:
     char inputChar();
     int inputInt();
 
-    int randomBetweenOneAndThree();
+    int randomBetweenZeroAndThree();
 
 private slots:
     void on_actionLoad_File_triggered();

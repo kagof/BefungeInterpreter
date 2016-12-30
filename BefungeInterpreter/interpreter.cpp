@@ -118,7 +118,7 @@ void Interpreter::step()
         return;
     }
     case('?'): {  // random direction
-        torus->changeDirection((CodeTorus::direction)parent->randomBetweenOneAndThree());  //generate random number between 0-3 as a direction
+        torus->changeDirection((CodeTorus::direction)parent->randomBetweenZeroAndThree());  //generate random number between 0-3 as a direction
         torus->next();
         return;
     }

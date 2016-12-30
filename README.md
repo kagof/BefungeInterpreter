@@ -69,7 +69,7 @@ Of course, the best way to use Befunge is to write your own programs!
 These features should be implemented in the future:
 * Working keyboard shortcuts listed in the menus.
 * Toggle whether to restrict playing field to 80x25 torus
-* Clickable "stop" button when running in "start" mode, instead of crashing on infinite loops.
+* ~~Clickable "stop" button when running in "start" mode, instead of crashing on infinite loops.~~ ✓
 * Runtime timeout, for the same reason.
 * Syntax highlighting.
 * ~~Two different modes for handling division by zero (ask for input, or push 0).~~ ✓ *also added three modes for handling of modulus by zero (ask for input, push 0, or crash, because this crashes in traditional Befunge-93)*
