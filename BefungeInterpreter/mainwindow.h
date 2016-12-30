@@ -151,6 +151,8 @@ private:
     bool started;
     bool submitted;
     bool resettable;
+
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H

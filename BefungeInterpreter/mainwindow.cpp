@@ -22,6 +22,7 @@
 #include <QTextCharFormat>
 #include <QTextFormat>
 #include <QMessageBox>
+#include <QCloseEvent>
 
 #include <iostream>
 #include <chrono>
@@ -851,4 +852,18 @@ void MainWindow::on_actionCrash_triggered(bool checked)
         ui->actionAsk_For_Input_2->setChecked(true);
         on_actionAsk_For_Input_2_triggered(true);
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (modified){
+        on_actionClose_File_triggered();
+    }
+
+    if (modified){
+        event->ignore();  // if the file is still modified, then the user pressed cancel at some point in the close file process.
+    }
+
+    else event->accept();
+
 }
