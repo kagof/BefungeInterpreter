@@ -37,6 +37,7 @@ public:
     ~MainWindow();
 
     void addToSourceBox(char c);
+    void replaceAt(char c, int i);
     void setSourceBoxText(QString s);
     QString getSourceBoxText();
     void setStackBoxText(QString s);
@@ -133,7 +134,35 @@ private:
 
     QTextCharFormat *currentCharFormat;
     QTextCharFormat *defaultFormat;
+
+    QTextCharFormat *directionFormat;
+    QTextCharFormat *directionFormatPC;
+    QTextCharFormat *quoteFormat;
+    QTextCharFormat *quoteFormatPC;
+    QTextCharFormat *mathFormat;
+    QTextCharFormat *mathFormatPC;
+    QTextCharFormat *putGetFormat;
+    QTextCharFormat *putGetFormatPC;
+    QTextCharFormat *inOutFormat;
+    QTextCharFormat *inOutFormatPC;
+    QTextCharFormat *logicFormat;
+    QTextCharFormat *logicFormatPC;
+    QTextCharFormat *stackManipFormat;
+    QTextCharFormat *stackManipFormatPC;
+    QTextCharFormat *endFormat;
+    QTextCharFormat *endFormatPC;
+    QTextCharFormat *trampolineFormat;
+    QTextCharFormat *trampolineFormatPC;
+    QTextCharFormat *numberFormat;
+    QTextCharFormat *numberFormatPC;
+    QTextCharFormat *invalidFormat;
+    QTextCharFormat *invalidFormatPC;
+
     QTextCursor *cursor;
+
+    void syntaxHighlightSource();
+    void syntaxHighlight(QTextCursor *cursor);
+    void syntaxHighlightPC(QTextCursor *cursor);
 
     QString tmpOriginalProgram;
 

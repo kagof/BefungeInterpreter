@@ -47,15 +47,83 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->actionSave_File->setEnabled(false);
 
-    currentCharFormat = new QTextCharFormat();
-    currentCharFormat->setBackground(QBrush(Qt::cyan));
+
 
     ui->sourceBox->setWordWrapMode(QTextOption::NoWrap);
     ui->inputBox->setReadOnly(true);
     ui->inputBox->setEnabled(false);
     ui->sourceBox->setFocus();
 
+    // for syntax highlighting
     defaultFormat = new QTextCharFormat(ui->sourceBox->currentCharFormat());
+    currentCharFormat = new QTextCharFormat();
+    currentCharFormat->setBackground(QBrush(Qt::cyan));
+
+    directionFormat = new QTextCharFormat();
+    directionFormat->setForeground(QBrush(Qt::magenta));
+    directionFormatPC = new QTextCharFormat();
+    directionFormatPC->setForeground(QBrush(Qt::magenta));
+    directionFormatPC->setBackground(QBrush(Qt::cyan));
+
+    quoteFormat = new QTextCharFormat();
+    quoteFormat->setForeground(QBrush(Qt::darkBlue));
+    quoteFormatPC = new QTextCharFormat();
+    quoteFormatPC->setForeground(QBrush(Qt::darkBlue));
+    quoteFormatPC->setBackground(QBrush(Qt::cyan));
+
+    mathFormat = new QTextCharFormat();
+    mathFormat->setForeground(QBrush(QColor("darkorange")));
+    mathFormatPC = new QTextCharFormat();
+    mathFormatPC->setForeground(QBrush(QColor("darkorange")));
+    mathFormatPC->setBackground(QBrush(Qt::cyan));
+
+    putGetFormat = new QTextCharFormat();
+    putGetFormat->setForeground(QBrush(Qt::green));
+    putGetFormatPC = new QTextCharFormat();
+    putGetFormatPC->setForeground(QBrush(Qt::green));
+    putGetFormatPC->setBackground(QBrush(Qt::cyan));
+
+    inOutFormat = new QTextCharFormat();
+    inOutFormat->setForeground(QBrush(Qt::darkGreen));
+    inOutFormatPC = new QTextCharFormat();
+    inOutFormatPC->setForeground(QBrush(Qt::darkGreen));
+    inOutFormatPC->setBackground(QBrush(Qt::cyan));
+
+    logicFormat = new QTextCharFormat();
+    logicFormat->setForeground(QBrush(Qt::gray));
+    logicFormatPC = new QTextCharFormat();
+    logicFormatPC->setForeground(QBrush(Qt::gray));
+    logicFormatPC->setBackground(QBrush(Qt::cyan));
+
+    stackManipFormat = new QTextCharFormat();
+    stackManipFormat->setForeground(QBrush(Qt::darkRed));
+    stackManipFormatPC = new QTextCharFormat();
+    stackManipFormatPC->setForeground(QBrush(Qt::darkRed));
+    stackManipFormatPC->setBackground(QBrush(Qt::cyan));
+
+    endFormat = new QTextCharFormat();
+    endFormat->setForeground(QBrush(Qt::red));
+    endFormatPC = new QTextCharFormat();
+    endFormatPC->setForeground(QBrush(Qt::red));
+    endFormatPC->setBackground(QBrush(Qt::cyan));
+
+    trampolineFormat = new QTextCharFormat();
+    trampolineFormat->setForeground(QBrush(QColor("teal")));
+    trampolineFormatPC = new QTextCharFormat();
+    trampolineFormatPC->setForeground(QBrush(QColor("teal")));
+    trampolineFormatPC->setBackground(QBrush(Qt::cyan));
+
+    numberFormat = new QTextCharFormat();
+    numberFormat->setForeground(QBrush(Qt::darkYellow));
+    numberFormatPC = new QTextCharFormat();
+    numberFormatPC->setForeground(QBrush(Qt::darkYellow));
+    numberFormatPC->setBackground(QBrush(Qt::cyan));
+
+    invalidFormat = new QTextCharFormat();
+    invalidFormat->setForeground(QBrush(QColor("maroon")));
+    invalidFormatPC = new QTextCharFormat();
+    invalidFormatPC->setForeground(QBrush(QColor("maroon")));
+    invalidFormatPC->setBackground(QBrush(Qt::cyan));
 
     mode = EDIT;
     savePrompt = false;
@@ -91,6 +159,23 @@ MainWindow::~MainWindow()
 void MainWindow::addToSourceBox(char c)
 {
     ui->sourceBox->insertPlainText(QString(c));
+}
+
+void MainWindow::replaceAt(char c, int i)
+{
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->setPosition(i);
+    cursor->setPosition(i + 1, QTextCursor::KeepAnchor);
+    cursor->removeSelectedText();
+    cursor->clearSelection();
+    cursor->setPosition(i);
+    cursor->insertText(QString(c));
+    cursor->setPosition(i);
+    cursor->setPosition(i + 1, QTextCursor::KeepAnchor);
+    if (torus->position() == i) syntaxHighlightPC(cursor);
+    else syntaxHighlight(cursor);
+    cursor->clearSelection();
+    delete cursor;
 }
 
 void MainWindow::setSourceBoxText(QString s)
@@ -297,6 +382,7 @@ void MainWindow::on_actionLoad_File_triggered()
  * */
 void MainWindow::on_runRadioButton_toggled(bool checked)
 {
+    bool tmpModified = modified;
     ui->editRadioButton->toggled(!checked);
     ui->sourceBox->setReadOnly(checked);  // user can't edit the text when in run mode.
 
@@ -306,7 +392,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         if (!keepPadding) tmpOriginalProgram = ui->sourceBox->toPlainText();
 
         //if we already opened the file, and haven't changed anything, can use previously obtained values
-        if (fileIsOpen && !this->windowTitle().endsWith(QString("*"))) torus = new CodeTorus(this, f->getWidth(), f->getHeight(), ui->sourceBox->toPlainText());
+        if (fileIsOpen && !modified) torus = new CodeTorus(this, f->getWidth(), f->getHeight(), ui->sourceBox->toPlainText());
 
         else{
             QString st = ui->sourceBox->toPlainText();
@@ -356,7 +442,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
             }
             this->setSourceBoxText(st);
             if (changedThings) ui->sourceBox->document()->setModified(true);
-            else ui->sourceBox->document()->setModified(false);
+            else ui->sourceBox->document()->setModified(tmpModified);
 
             //create the torus
             torus = new CodeTorus(this, longest, numLines, st);            
@@ -376,11 +462,13 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         if (ui->actionPush_Zero_2->isChecked()) terp->setModZeroMode(Interpreter::PUSHZERO);
         if (ui->actionCrash->isChecked()) terp->setModZeroMode(Interpreter::CRASH);
 
+        syntaxHighlightSource();
+
         //highlight the first element
         bool tmpModified = modified;
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->setPosition(1, QTextCursor::KeepAnchor);
-        cursor->setCharFormat(*currentCharFormat);
+        syntaxHighlightPC(cursor);
         cursor->clearSelection();
         delete cursor;
         ui->sourceBox->document()->setModified(tmpModified);
@@ -401,16 +489,19 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->outputBox->clear();
         delete torus;
         delete terp;
+        bool tmpModified = modified;
 
-        if (!keepRuntimeChanges) ui->sourceBox->setPlainText(tmpOriginalProgram);
+        if (!keepRuntimeChanges) {
+            ui->sourceBox->setPlainText(tmpOriginalProgram);
+            ui->sourceBox->document()->setModified(tmpModified);
+        }
         tmpOriginalProgram.clear();
 
         //grab keyboard
         ui->sourceBox->grabKeyboard();
         ui->sourceBox->setFocus();
 
-        //get rid of the highlighted current PC
-        bool tmpModified = modified;
+        //get rid of the highlighted syntax & current PC
         cursor = new QTextCursor(ui->sourceBox->document());
         cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
         cursor->setCharFormat(*defaultFormat);
@@ -551,17 +642,18 @@ void MainWindow::on_actionOverwrite_Mode_triggered(bool checked)
 
 void MainWindow::on_stepButton_clicked()
 {
-    terp->step();
     bool tmpModified = modified;
-    cursor = new QTextCursor(ui->sourceBox->document());
-    cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
-    cursor->setCharFormat(*defaultFormat);
-    cursor->clearSelection();
-    delete cursor;
     cursor = new QTextCursor(ui->sourceBox->document());
     cursor->setPosition(torus->position());
     cursor->setPosition(torus->position()+1, QTextCursor::KeepAnchor);
-    cursor->setCharFormat(*currentCharFormat);
+    syntaxHighlight(cursor);
+    cursor->clearSelection();
+    delete cursor;
+    terp->step();
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->setPosition(torus->position());
+    cursor->setPosition(torus->position()+1, QTextCursor::KeepAnchor);
+    syntaxHighlightPC(cursor);
     cursor->clearSelection();
     delete cursor;
     ui->sourceBox->document()->setModified(tmpModified);
@@ -572,9 +664,11 @@ void MainWindow::on_startButton_clicked()
 
     // if resettable is true, then the start button is functioning as the reset button.
     if (resettable) {
+        bool tmp = modified;
         // toggling the "run" radio button resets the program
         on_runRadioButton_toggled(false);
         on_runRadioButton_toggled(true);
+        ui->sourceBox->document()->setModified(tmp);
         ui->startButton->setText("Start");
         resettable = false;
         return;
@@ -622,15 +716,11 @@ void MainWindow::on_startButton_clicked()
     }
 
     bool tmpModified = modified;
-    cursor = new QTextCursor(ui->sourceBox->document());
-    cursor->movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
-    cursor->setCharFormat(*defaultFormat);
-    cursor->clearSelection();
-    delete cursor;
+    syntaxHighlightSource();
     cursor = new QTextCursor(ui->sourceBox->document());
     cursor->setPosition(torus->position());
     cursor->setPosition(torus->position()+1, QTextCursor::KeepAnchor);
-    cursor->setCharFormat(*currentCharFormat);
+    syntaxHighlightPC(cursor);
     cursor->clearSelection();
     delete cursor;
     ui->sourceBox->document()->setModified(tmpModified);
@@ -909,8 +999,127 @@ void MainWindow::on_actionCrash_triggered(bool checked)
     }
 }
 
+void MainWindow::syntaxHighlightSource()
+{
+    int size = ui->sourceBox->toPlainText().size();
+    bool tmpModified = modified;
+    cursor = new QTextCursor(ui->sourceBox->document());
+    for (int i = 0; i < size - 1; i++) {
+        cursor->clearSelection();
+        cursor->setPosition(i + 1, QTextCursor::KeepAnchor);
+        syntaxHighlight(cursor);
+    }
+    ui->sourceBox->document()->setModified(tmpModified);
+}
+
+void MainWindow::syntaxHighlight(QTextCursor *cursor)
+{
+    char selected = cursor->selectedText().at(0).toLatin1();
+    switch (selected){
+    case ('>'): case ('v'): case ('<'): case ('^'): case ('?'): {
+        cursor->setCharFormat(*directionFormat);
+        return;
+    }
+    case ('*'): case ('/'): case ('%'): case ('+'): case ('-'): {
+        cursor->setCharFormat(*mathFormat);
+        return;
+    }
+    case ('1'): case ('2'): case ('3'): case ('4'): case ('5'): case ('6'): case ('7'): case ('8'): case ('9'): case ('0'): {
+        cursor->setCharFormat(*numberFormat);
+        return;
+    }
+    case ('p'): case ('g'): {
+        cursor->setCharFormat(*putGetFormat);
+        return;
+    }
+    case ('!'): case ('_'): case ('|'): case ('`'): {
+        cursor->setCharFormat(*logicFormat);
+        return;
+    }
+    case ('.'): case (','): case ('&'): case ('~'): {
+        cursor->setCharFormat(*inOutFormat);
+        return;
+    }
+    case ('#'): {
+        cursor->setCharFormat(*trampolineFormat);
+        return;
+    }
+    case ('@'): {
+        cursor->setCharFormat(*endFormat);
+        return;
+    }
+    case ('$'): case ('\\'): case (':'): {
+        cursor->setCharFormat(*stackManipFormat);
+    }
+    case ('"'): {
+        cursor->setCharFormat(*quoteFormat);
+        return;
+    }
+    case (' '): case ('\n'): {
+        cursor->setCharFormat(*defaultFormat);
+        return;
+    }
+    }
+    cursor->setCharFormat(*invalidFormat);
+    return;
+}
+
+void MainWindow::syntaxHighlightPC(QTextCursor *cursor)
+{
+    char selected = cursor->selectedText().at(0).toLatin1();
+    switch (selected){
+    case ('>'): case ('v'): case ('<'): case ('^'): case ('?'): {
+        cursor->setCharFormat(*directionFormatPC);
+        return;
+    }
+    case ('*'): case ('/'): case ('%'): case ('+'): case ('-'): {
+        cursor->setCharFormat(*mathFormatPC);
+        return;
+    }
+    case ('1'): case ('2'): case ('3'): case ('4'): case ('5'): case ('6'): case ('7'): case ('8'): case ('9'): case ('0'): {
+        cursor->setCharFormat(*numberFormatPC);
+        return;
+    }
+    case ('p'): case ('g'): {
+        cursor->setCharFormat(*putGetFormatPC);
+        return;
+    }
+    case ('!'): case ('_'): case ('|'): case ('`'): {
+        cursor->setCharFormat(*logicFormatPC);
+        return;
+    }
+    case ('.'): case (','): case ('&'): case ('~'): {
+        cursor->setCharFormat(*inOutFormatPC);
+        return;
+    }
+    case ('#'): {
+        cursor->setCharFormat(*trampolineFormatPC);
+        return;
+    }
+    case ('@'): {
+        cursor->setCharFormat(*endFormatPC);
+        return;
+    }
+    case ('$'): case ('\\'): case (':'): {
+        cursor->setCharFormat(*stackManipFormatPC);
+    }
+    case ('"'): {
+        cursor->setCharFormat(*quoteFormatPC);
+        return;
+    }
+    case (' '): case ('\n'): {
+        cursor->setCharFormat(*currentCharFormat);
+        return;
+    }
+    }
+    cursor->setCharFormat(*invalidFormatPC);
+    return;
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if (running) running = false;
+    if (started) started = false;
     if (modified){
         on_actionClose_File_triggered();
     }

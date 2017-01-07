@@ -36,7 +36,7 @@ void CodeTorus::putChar(char c, int x, int y)
 {
     if (y < height && x < width){
         chars.replace(x + (width+1)*y, 1, new QChar(c),1);
-        parent->setSourceBoxText(chars);
+        parent->replaceAt(c, x + (width+1)*y);
     }
 
 /* TODO:

@@ -263,7 +263,6 @@ void Interpreter::step()
         return;
     }
     }
-    //TODO: if we get here then we hit an invalid character.
     switch (unsupCharMode) {
 
     case(ABORT): {
@@ -387,6 +386,10 @@ void Interpreter::handleDivideByZero()
     }
     case(PUSHZERO):{
         push((char)0);
+        return;
+    }
+    case(CRASH):{
+        //should never happen, but put here to prevent compiler warning
         return;
     }
     }
