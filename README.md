@@ -10,7 +10,7 @@ A C++/QT GUI interpreter for the Befunge-93 esoteric programming language. Teste
 
 ## Screenshot
 
-<p align="center"><img src="https://github.com/kagof/BefungeInterpreter/blob/master/Screenshots/kbfi1-0-0-screenshot-NumberGuesser.PNG"></p>
+<p align="center"><img src="https://github.com/kagof/BefungeInterpreter/blob/master/Screenshots/kbfi1-0-1-screenshot-NumberGuesser.PNG"></p>
 
 ## Installing
 
