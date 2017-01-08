@@ -463,6 +463,7 @@
     <addaction name="separator"/>
     <addaction name="actionKeep_Padding_From_Run"/>
     <addaction name="actionKeep_Runtime_Changes"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>

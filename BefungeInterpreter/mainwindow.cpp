@@ -1,13 +1,17 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * *
- *                                                 *
- *      Kagof Befunge-93 Interpreter v1.0.0        *
- *        copyright (c) Karl Goffin 2016           *
- *    released under the open source MIT license   *
- *                                                 *
- *   http://github.com/Kagof/BefungeInterpreter    *
- *                                                 *
- *                                                 *
- * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+╔═══════════════════════════════════════════════════╗
+║* * * * * * * * * * * * * * * * * * * * * * * * * *║
+║*                                                 *║
+║*      Kagof Befunge-93 Interpreter v1.0.1        *║
+║*      copyright (c) Karl Goffin 2016-2017        *║
+║*    released under the open source MIT license   *║
+║*                                                 *║
+║*   http://github.com/Kagof/BefungeInterpreter    *║
+║*                                                 *║
+║*                                                 *║
+║* * * * * * * * * * * * * * * * * * * * * * * * * *║
+╚═══════════════════════════════════════════════════╝
+                                                   */
 
 
 #include <QString>
@@ -163,6 +167,7 @@ void MainWindow::addToSourceBox(char c)
 
 void MainWindow::replaceAt(char c, int i)
 {
+    bool tmpModified = modified;
     cursor = new QTextCursor(ui->sourceBox->document());
     cursor->setPosition(i);
     cursor->setPosition(i + 1, QTextCursor::KeepAnchor);
@@ -176,6 +181,8 @@ void MainWindow::replaceAt(char c, int i)
     else syntaxHighlight(cursor);
     cursor->clearSelection();
     delete cursor;
+    if (keepRuntimeChanges) ui->sourceBox->document()->setModified(true);
+    else ui->sourceBox->document()->setModified(tmpModified);
 }
 
 void MainWindow::setSourceBoxText(QString s)

@@ -8,7 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = BefungeInterpreter
+TARGET = KagofBefunge93Interpreter
+VERSION = 1.0.1
 TEMPLATE = app
 
 
@@ -29,3 +30,4 @@ RESOURCES += \
     images.qrc
 	
 RC_FILE = bficon.rc
+

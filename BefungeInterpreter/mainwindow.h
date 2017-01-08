@@ -1,13 +1,18 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * *
- *                                                 *
- *      Kagof Befunge-93 Interpreter v1.0.0        *
- *        copyright (c) Karl Goffin 2016           *
- *    released under the open source MIT license   *
- *                                                 *
- *   http://github.com/Kagof/BefungeInterpreter    *
- *                                                 *
- *                                                 *
- * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*
+╔═══════════════════════════════════════════════════╗
+║* * * * * * * * * * * * * * * * * * * * * * * * * *║
+║*                                                 *║
+║*      Kagof Befunge-93 Interpreter v1.0.1        *║
+║*      copyright (c) Karl Goffin 2016-2017        *║
+║*    released under the open source MIT license   *║
+║*                                                 *║
+║*   http://github.com/Kagof/BefungeInterpreter    *║
+║*                                                 *║
+║*                                                 *║
+║* * * * * * * * * * * * * * * * * * * * * * * * * *║
+╚═══════════════════════════════════════════════════╝
+                                                   */
+
 
 
 #ifndef MAINWINDOW_H
