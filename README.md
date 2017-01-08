@@ -70,7 +70,7 @@ These features should be implemented in the future:
 * Working keyboard shortcuts listed in the menus.
 * Toggle whether to restrict playing field to 80x25 torus
 * ~~Clickable "stop" button when running in "start" mode, instead of crashing on infinite loops.~~ ✓
-* Runtime timeout, for the same reason.
+* ~~Runtime timeout, for the same reason.~~ ✗ *seems redundant with the stop button*
 * ~~Syntax highlighting.~~ ✓ ***TODO****: customizable colours, optional syntax highlighting*
 * ~~Two different modes for handling division by zero (ask for input, or push 0).~~ ✓ *also added three modes for handling of modulus by zero (ask for input, push 0, or crash, because this crashes in traditional Befunge-93)*
 * Allow input of longer strings, taking only first character, then the next, etc.
