@@ -21,116 +21,6 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="7" colspan="3">
-     <widget class="QLineEdit" name="inputBox">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>44</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>Courier New</family>
-       </font>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="7">
-     <widget class="QLabel" name="stackLabel">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="font">
-       <font>
-        <family>MS Sans Serif</family>
-        <pointsize>10</pointsize>
-        <italic>false</italic>
-       </font>
-      </property>
-      <property name="text">
-       <string>Stack</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="7" colspan="5">
-     <widget class="QTextBrowser" name="stackBox">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="font">
-       <font>
-        <family>Courier New</family>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="7">
-     <spacer name="verticalSpacer_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="9" column="7">
-     <widget class="QLabel" name="outputLabel">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="font">
-       <font>
-        <family>MS Sans Serif</family>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Output</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="7">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="11" column="7" colspan="5">
-     <widget class="QTextBrowser" name="outputBox">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="font">
-       <font>
-        <family>Courier New</family>
-       </font>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="7">
      <widget class="QLabel" name="inputLabel">
       <property name="enabled">
@@ -144,25 +34,6 @@
       </property>
       <property name="text">
        <string>Input</string>
-      </property>
-     </widget>
-    </item>
-    <item row="13" column="4">
-     <widget class="QLabel" name="speedLabel">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="font">
-       <font>
-        <family>MS Sans Serif</family>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Speed:</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -209,22 +80,44 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0" rowspan="9" colspan="6">
-     <widget class="QPlainTextEdit" name="sourceBox">
+    <item row="11" column="7" colspan="5">
+     <widget class="QTextBrowser" name="outputBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="font">
        <font>
         <family>Courier New</family>
        </font>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+     </widget>
+    </item>
+    <item row="13" column="4">
+     <widget class="QLabel" name="speedLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Speed:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
-    <item row="12" column="0" colspan="12">
-     <widget class="Line" name="hLine">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="13" column="0">
+     <widget class="QPushButton" name="startButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Start</string>
       </property>
      </widget>
     </item>
@@ -235,6 +128,18 @@
       </property>
       <property name="text">
        <string>Slow</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" rowspan="9" colspan="6">
+     <widget class="QPlainTextEdit" name="sourceBox">
+      <property name="font">
+       <font>
+        <family>Courier New</family>
+       </font>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
       </property>
      </widget>
     </item>
@@ -251,13 +156,10 @@
       </property>
      </spacer>
     </item>
-    <item row="13" column="0">
-     <widget class="QPushButton" name="startButton">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="text">
-       <string>Start</string>
+    <item row="12" column="0" colspan="12">
+     <widget class="Line" name="hLine">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
@@ -268,6 +170,104 @@
       </property>
       <property name="text">
        <string>Step</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="7" colspan="5">
+     <widget class="QTextBrowser" name="stackBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="font">
+       <font>
+        <family>Courier New</family>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="7">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="7" colspan="3">
+     <widget class="QLineEdit" name="inputBox">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>44</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Courier New</family>
+       </font>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="7">
+     <widget class="QLabel" name="stackLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+        <italic>false</italic>
+       </font>
+      </property>
+      <property name="text">
+       <string>Stack</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="7">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="9" column="7">
+     <widget class="QLabel" name="outputLabel">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Sans Serif</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Output</string>
       </property>
      </widget>
     </item>
@@ -291,6 +291,9 @@
       </property>
       <property name="text">
        <string>Mode:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -326,25 +329,6 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="6" rowspan="10">
-     <widget class="Line" name="vLine">
-      <property name="acceptDrops">
-       <bool>false</bool>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="lineWidth">
-       <number>1</number>
-      </property>
-      <property name="midLineWidth">
-       <number>0</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
     <item row="3" column="10">
      <widget class="QPushButton" name="inputSubmitButton">
       <property name="enabled">
@@ -365,6 +349,40 @@
       </property>
       <property name="text">
        <string>LineFeed</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="6" rowspan="10">
+     <widget class="Line" name="vLine">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="7" colspan="2">
+     <widget class="QLabel" name="versionLabel">
+      <property name="font">
+       <font>
+        <italic>true</italic>
+       </font>
+      </property>
+      <property name="text">
+       <string>Version: 1.0.1</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>

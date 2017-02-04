@@ -72,12 +72,12 @@ These features should be implemented in the future:
 * customizable syntax highlighting colours, ability to turn syntax highlighting off.
 * Allow input of longer strings, taking only first character, then the next, etc.
 * ~~Debug mode (allowing insertions of breakpoints in the code). Currently the button does nothing.~~ *Breakpoints can be created in run mode by clicking on desired character. Debug mode is functional.*
-* Include version number somewhere on the software itself.
+* ~~Include version number somewhere on the software itself.~~ *added version label.*
 * Help in the software (tooltips and/or whats this).
 
 ## Version History
 
-* Kagof Befunge-93 Interpreter v1.0.1
+* Kagof Befunge-93 Interpreter [v1.0.1](https://github.com/kagof/BefungeInterpreter/tree/d8da112cd4bf857b5876c451a327c14fa1712638)
     - bugfixes
 	- stop button in start mode
 	- syntax highlighting
