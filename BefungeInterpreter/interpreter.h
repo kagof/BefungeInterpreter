@@ -37,6 +37,7 @@ public:
     void push(char c);
     char pop();
     QString getOutputStr();
+    void clearOutputString();
     void setUnsupportedCharMode(unsupportedCharMode md);
     void setDivZeroMode(divideOrModByZeroMode md);
     void setModZeroMode(divideOrModByZeroMode md);

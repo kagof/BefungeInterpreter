@@ -17,12 +17,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     file.cpp \
     codetorus.cpp \
-    interpreter.cpp
+    interpreter.cpp \
+    clickfilter.cpp
 
 HEADERS  += mainwindow.h \
     file.h \
     codetorus.h \
-    interpreter.h
+    interpreter.h \
+    clickfilter.h
 
 FORMS    += mainwindow.ui
 

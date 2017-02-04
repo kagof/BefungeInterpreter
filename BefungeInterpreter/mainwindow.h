@@ -20,12 +20,16 @@
 
 #include <QMainWindow>
 #include <QTextCharFormat>
+#include <QMouseEvent>
 #include <QTextCursor>
 #include <random>
+#include <unordered_map>
+#include <utility>
 
 class File;
 class CodeTorus;
 class Interpreter;
+class ClickFilter;
 
 enum Mode{EDIT, RUN};
 
@@ -54,10 +58,15 @@ public:
 
     bool isRunning();
     bool isStarted();
+    bool isInRunMode();
     char inputChar();
     int inputInt();
 
     int randomBetweenZeroAndThree();
+
+    bool toggleBreakpoint(int location);
+    void highlightBreakpoint(QTextCursor curs, bool breakpoint);
+
 
 private slots:
     void on_actionLoad_File_triggered();
@@ -95,6 +104,8 @@ private slots:
     void on_stepButton_clicked();
 
     void on_startButton_clicked();
+
+    void on_debugButton_clicked();
 
     void on_speedBox_valueChanged(int arg1);
 
@@ -135,10 +146,14 @@ private:
     CodeTorus* torus;
     Interpreter* terp;
 
+    ClickFilter* clickFilter;
+
     int slowTime;
 
     QTextCharFormat *currentCharFormat;
     QTextCharFormat *defaultFormat;
+    QTextCharFormat *breakpointFormat;
+    QTextCharFormat *cursorAndBreakpointFormat;
 
     QTextCharFormat *directionFormat;
     QTextCharFormat *directionFormatPC;
@@ -165,6 +180,11 @@ private:
 
     QTextCursor *cursor;
 
+    std::unordered_map<int, std::unordered_map<int, int>> breakpoints;
+    bool isBreakpoint(int location);
+    void addBreakpoint(int location);
+    void removeBreakpoint(int location);
+
     void syntaxHighlightSource();
     void syntaxHighlight(QTextCursor *cursor);
     void syntaxHighlightPC(QTextCursor *cursor);
@@ -187,6 +207,7 @@ private:
     bool resettable;
 
     void closeEvent(QCloseEvent *event);
+    void highlightBreakpoints();
 };
 
 #endif // MAINWINDOW_H

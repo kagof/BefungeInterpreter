@@ -39,6 +39,8 @@ public:
     char getCurrentChar();
     void next();
     QString getChars();
+    int getHeight();
+    int getWidth();
 
 private:
     MainWindow *parent;

@@ -366,6 +366,11 @@ QString Interpreter::getOutputStr()
     return outputStr;
 }
 
+void Interpreter::clearOutputString()
+{
+    outputStr = QString("");
+}
+
 void Interpreter::setUnsupportedCharMode(Interpreter::unsupportedCharMode md)
 {
     this->unsupCharMode = md;

@@ -127,3 +127,13 @@ QString CodeTorus::getChars()
 {
     return chars;
 }
+
+int CodeTorus::getHeight()
+{
+    return height;
+}
+
+int CodeTorus::getWidth()
+{
+    return width;
+}

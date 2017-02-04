@@ -40,6 +40,7 @@
 #include "file.h"
 #include "codetorus.h"
 #include "interpreter.h"
+#include "clickfilter.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -51,17 +52,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->actionSave_File->setEnabled(false);
 
-
-
     ui->sourceBox->setWordWrapMode(QTextOption::NoWrap);
     ui->inputBox->setReadOnly(true);
     ui->inputBox->setEnabled(false);
     ui->sourceBox->setFocus();
 
+    clickFilter = new ClickFilter(this, ui->sourceBox, this);
+    ui->sourceBox->viewport()->installEventFilter(clickFilter);
+
     // for syntax highlighting
     defaultFormat = new QTextCharFormat(ui->sourceBox->currentCharFormat());
     currentCharFormat = new QTextCharFormat();
     currentCharFormat->setBackground(QBrush(Qt::cyan));
+
+    breakpointFormat = new QTextCharFormat();
+    breakpointFormat->setBackground(QBrush(Qt::red));
+    breakpointFormat->setForeground(QBrush(Qt::black));
+
+    cursorAndBreakpointFormat = new QTextCharFormat();
+    cursorAndBreakpointFormat->setBackground(QBrush(Qt::darkMagenta));
+    cursorAndBreakpointFormat->setForeground(QBrush(Qt::green));
 
     directionFormat = new QTextCharFormat();
     directionFormat->setForeground(QBrush(Qt::magenta));
@@ -212,7 +222,8 @@ void MainWindow::output(int i)
 
 void MainWindow::programFinished()
 {
-    if (started) ui->outputBox->setPlainText(QString(terp->getOutputStr()));
+    if (started) ui->outputBox->setPlainText(ui->outputBox->toPlainText().append(QString(terp->getOutputStr())));
+    ui->outputBox->moveCursor(QTextCursor::End);
     if (started) ui->stackBox->setPlainText(terp->stackToQString());
     this->setCursor(Qt::ArrowCursor);
     running = false;
@@ -248,6 +259,11 @@ bool MainWindow::isRunning()
 bool MainWindow::isStarted()
 {
     return started;
+}
+
+bool MainWindow::isInRunMode()
+{
+    return (mode == RUN);
 }
 
 char MainWindow::inputChar()
@@ -452,13 +468,16 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
             else ui->sourceBox->document()->setModified(tmpModified);
 
             //create the torus
-            torus = new CodeTorus(this, longest, numLines, st);            
+            torus = new CodeTorus(this, longest, numLines, st);
         }
+        //create the breakpoint data structure
+        breakpoints = std::unordered_map<int, std::unordered_map<int, int>>();
 
         if (keepPadding) tmpOriginalProgram = ui->sourceBox->toPlainText();
 
         //create the interpreter
         terp = new Interpreter(this, torus);
+
 
         //set the unsupported character mode (constructor defaults to ABORT)
         if (ui->actionIgnore->isChecked()) terp->setUnsupportedCharMode(Interpreter::IGNORE);
@@ -496,6 +515,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->outputBox->clear();
         delete torus;
         delete terp;
+        delete &breakpoints;
         bool tmpModified = modified;
 
         if (!keepRuntimeChanges) {
@@ -672,10 +692,13 @@ void MainWindow::on_startButton_clicked()
     // if resettable is true, then the start button is functioning as the reset button.
     if (resettable) {
         bool tmp = modified;
+        std::unordered_map<int, std::unordered_map<int, int>> tmpbp = breakpoints;
         // toggling the "run" radio button resets the program
         on_runRadioButton_toggled(false);
         on_runRadioButton_toggled(true);
         ui->sourceBox->document()->setModified(tmp);
+        breakpoints = tmpbp;
+        highlightBreakpoints();
         ui->startButton->setText("Start");
         resettable = false;
         return;
@@ -688,7 +711,9 @@ void MainWindow::on_startButton_clicked()
         qApp->processEvents();
         this->repaint();
         running = false;
-        ui->outputBox->setPlainText(QString(terp->getOutputStr()));
+        ui->outputBox->setPlainText(ui->outputBox->toPlainText().append(QString(terp->getOutputStr())));
+        ui->outputBox->moveCursor(QTextCursor::End);
+        terp->clearOutputString();
         ui->stackBox->setPlainText(terp->stackToQString());
         ui->startButton->setEnabled(true);
         ui->debugButton->setEnabled(true);
@@ -714,6 +739,67 @@ void MainWindow::on_startButton_clicked()
         std::time_t now;
         while (started) {
             terp->step();
+            std::time(&now);
+            if (difftime(now, startTime) > 0.2){
+                qApp->processEvents();
+                startTime = std::time(0);
+            }
+        }
+    }
+
+    bool tmpModified = modified;
+    syntaxHighlightSource();
+    cursor = new QTextCursor(ui->sourceBox->document());
+    cursor->setPosition(torus->position());
+    cursor->setPosition(torus->position()+1, QTextCursor::KeepAnchor);
+    syntaxHighlightPC(cursor);
+    cursor->clearSelection();
+    delete cursor;
+    ui->sourceBox->document()->setModified(tmpModified);
+}
+
+void MainWindow::on_debugButton_clicked()
+{
+
+    if (started) {  // user clicked the stop button or breakpoint hit
+        ui->startButton->setText("Start");
+        ui->startButton->setEnabled(false);
+        this->setCursor(Qt::WaitCursor);
+        qApp->processEvents();
+        this->repaint();
+        running = false;
+        ui->outputBox->setPlainText(ui->outputBox->toPlainText().append(QString(terp->getOutputStr())));
+        ui->outputBox->moveCursor(QTextCursor::End);
+        terp->clearOutputString();
+        ui->stackBox->setPlainText(terp->stackToQString());
+        ui->startButton->setEnabled(true);
+        ui->debugButton->setEnabled(true);
+        ui->stepButton->setEnabled(true);
+        ui->editRadioButton->setEnabled(true);
+        ui->slowButton->setEnabled(true);
+        this->setCursor(Qt::ArrowCursor);
+        qApp->processEvents();
+        this->repaint();
+    }
+
+    started = !started;
+    if (started) {
+        this->setCursor(Qt::BusyCursor);
+        ui->startButton->setText("Stop");
+        ui->debugButton->setEnabled(false);
+        ui->editRadioButton->setEnabled(false);
+        ui->stepButton->setEnabled(false);
+        ui->slowButton->setEnabled(false);
+        qApp->processEvents();
+        this->repaint();
+        std::time_t startTime = std::time(0);
+        std::time_t now;
+        while (started) {
+            terp->step();
+            if (isBreakpoint(torus->position())) {
+                on_debugButton_clicked();  // act like the debugger was paused if a breakpoint is hit
+                continue;
+            }
             std::time(&now);
             if (difftime(now, startTime) > 0.2){
                 qApp->processEvents();
@@ -1006,6 +1092,73 @@ void MainWindow::on_actionCrash_triggered(bool checked)
     }
 }
 
+bool MainWindow::isBreakpoint(int location)
+{
+    int width = torus->getWidth();
+    int row = location / width;
+    int col = location % width;
+    if (breakpoints.find(row) == breakpoints.end()) return false;
+    else if (breakpoints[row].find(col) == breakpoints[row].end()) return false;
+    else return true;
+}
+
+// toggles whether that location is a breakpoint. Returns true if toggled on, false if toggled off.
+bool MainWindow::toggleBreakpoint(int location)
+{
+    if (isBreakpoint(location)){
+        removeBreakpoint(location);
+        return false;
+    }
+    else {
+        addBreakpoint(location);
+        return true;
+    }
+}
+
+void MainWindow::highlightBreakpoints(){
+    for (auto i : breakpoints){
+        for (auto j : i.second) {
+            QTextCursor cur = ui->sourceBox->textCursor();
+            cur.setPosition(j.second);
+            highlightBreakpoint(cur, true);
+        }
+    }
+}
+
+void MainWindow::highlightBreakpoint(QTextCursor curs, bool breakpoint)
+{
+    curs.setPosition(curs.position() + 1, QTextCursor::KeepAnchor);
+    if (breakpoint && curs.position() - 1 == torus->position()) curs.setCharFormat(*cursorAndBreakpointFormat);
+    else if (breakpoint) curs.setCharFormat(*breakpointFormat);
+    else if (curs.position() - 1 == torus->position()) curs.setCharFormat(*currentCharFormat);
+    else syntaxHighlight(&curs);
+    curs.clearSelection();
+
+}
+
+void MainWindow::addBreakpoint(int location)
+{
+    int width = torus->getWidth();
+    int row = location / width;
+    int col = location % width;
+    if (breakpoints.find(row) == breakpoints.end()){
+        breakpoints[row] = std::unordered_map<int, int>();
+    }
+    breakpoints[row][col] = location;
+}
+
+void MainWindow::removeBreakpoint(int location)
+{
+    int width = torus->getWidth();
+    int row = location / width;
+    int col = location % width;
+    breakpoints[row].erase(col);
+    if (breakpoints[row].empty()){
+        breakpoints.erase(col);
+    }
+}
+
+
 void MainWindow::syntaxHighlightSource()
 {
     int size = ui->sourceBox->toPlainText().size();
@@ -1021,6 +1174,10 @@ void MainWindow::syntaxHighlightSource()
 
 void MainWindow::syntaxHighlight(QTextCursor *cursor)
 {
+    if (isBreakpoint(cursor->position() - 1)){
+        cursor->setCharFormat(*breakpointFormat);
+        return;
+    }
     char selected = cursor->selectedText().at(0).toLatin1();
     switch (selected){
     case ('>'): case ('v'): case ('<'): case ('^'): case ('?'): {

@@ -71,7 +71,7 @@ These features should be implemented in the future:
 * Toggle whether to restrict playing field to 80x25 torus.
 * customizable syntax highlighting colours, ability to turn syntax highlighting off.
 * Allow input of longer strings, taking only first character, then the next, etc.
-* Debug mode (allowing insertions of breakpoints in the code). Currently the button does nothing.
+* ~~Debug mode (allowing insertions of breakpoints in the code). Currently the button does nothing.~~ *Breakpoints can be created in run mode by clicking on desired character. Debug mode is functional.*
 * Include version number somewhere on the software itself.
 * Help in the software (tooltips and/or whats this).
 
