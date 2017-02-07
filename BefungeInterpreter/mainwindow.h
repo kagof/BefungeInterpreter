@@ -65,7 +65,7 @@ public:
     int randomBetweenZeroAndThree();
 
     bool toggleBreakpoint(int location);
-    void highlightBreakpoint(QTextCursor curs, bool breakpoint);
+    void highlightBreakpoint(QTextCursor curs, bool breakpoint, bool standalone = true);
 
 
 private slots:
@@ -186,8 +186,8 @@ private:
     void removeBreakpoint(int location);
 
     void syntaxHighlightSource();
-    void syntaxHighlight(QTextCursor *cursor);
-    void syntaxHighlightPC(QTextCursor *cursor);
+    void syntaxHighlight(QTextCursor *cursor, bool standalone = true);
+    void syntaxHighlightPC(QTextCursor *cursor, bool standalone = true);
 
     QString tmpOriginalProgram;
 

@@ -50,14 +50,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->resize(2000,1200);
     MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
 
-    ui->actionSave_File->setEnabled(false);
-
     ui->sourceBox->setWordWrapMode(QTextOption::NoWrap);
     ui->inputBox->setReadOnly(true);
     ui->inputBox->setEnabled(false);
     ui->sourceBox->setFocus();
 
-    clickFilter = new ClickFilter(this, ui->sourceBox, this);
+    clickFilter = new ClickFilter(this, this);
     ui->sourceBox->viewport()->installEventFilter(clickFilter);
 
     // for syntax highlighting
@@ -506,6 +504,11 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->actionRedo->setEnabled(false);
         ui->actionPaste->setEnabled(false);
 
+        ui->actionSave_File->setEnabled(false);
+        ui->actionSave_File_As->setEnabled(false);
+        ui->actionLoad_File->setEnabled(false);
+        ui->actionClose_File->setEnabled(false);
+
     }
     else {
         //clean up
@@ -515,7 +518,7 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         ui->outputBox->clear();
         delete torus;
         delete terp;
-        delete &breakpoints;
+        breakpoints.clear();
         bool tmpModified = modified;
 
         if (!keepRuntimeChanges) {
@@ -535,6 +538,12 @@ void MainWindow::on_runRadioButton_toggled(bool checked)
         cursor->clearSelection();
         delete cursor;
         ui->sourceBox->document()->setModified(tmpModified);
+
+
+        ui->actionSave_File->setEnabled(true);
+        ui->actionSave_File_As->setEnabled(true);
+        ui->actionLoad_File->setEnabled(true);
+        ui->actionClose_File->setEnabled(true);
     }
     ui->sourceBox->setUndoRedoEnabled(!checked);
 
@@ -603,8 +612,7 @@ void MainWindow::on_menuFile_aboutToShow()
     ui->actionLoad_File->setEnabled(editmd);
     ui->actionClose_File->setEnabled((editmd && (modified || fileIsOpen)));  // close button only enabled if we are in edit mode,
                                                                              // and we have modified the text or opened a file.
-    if (fileIsOpen) ui->actionSave_File->setEnabled(editmd);
-    else ui->actionSave_File->setEnabled(false);
+    ui->actionSave_File->setEnabled(editmd);
     ui->actionSave_File_As->setEnabled(editmd);
 
 }
@@ -645,7 +653,6 @@ void MainWindow::on_sourceBox_modificationChanged(bool arg1)
         }
         else MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter *"));
 
-        // for enabling save
         modified = true;
     }
     // not modified
@@ -657,7 +664,6 @@ void MainWindow::on_sourceBox_modificationChanged(bool arg1)
         }
         else MainWindow::setWindowTitle(QString("Kagof Befunge Interpreter"));
 
-        //for disabling save
         modified = false;
     }
 }
@@ -923,6 +929,7 @@ void MainWindow::on_actionSave_File_triggered()
             else QMessageBox::warning(this, "Error", "File failed to save.", QMessageBox::Ok, QMessageBox::Ok);
         }
     }
+    else on_actionSave_File_As_triggered();
 }
 
 void MainWindow::on_actionKeep_Padding_From_Run_triggered(bool checked)
@@ -946,6 +953,8 @@ void MainWindow::on_actionSave_File_As_triggered()
     else filepath = QFileDialog::getSaveFileName(this, "Save source as...",
                                                  QString(f->getFilepath().c_str()),
                                                  tr("Befunge file (*.bf);; Befunge-93 file (*.b93);; Text file (*.txt);;  All files (*.*)"));
+
+    if (filepath.isNull()) return;  // user pressed cancel
 
     if (f->saveFileAs(filepath, sourceBoxText)){
         if (!fileIsOpen) {
@@ -1116,23 +1125,29 @@ bool MainWindow::toggleBreakpoint(int location)
 }
 
 void MainWindow::highlightBreakpoints(){
+    bool tmpmodified = modified;
     for (auto i : breakpoints){
         for (auto j : i.second) {
             QTextCursor cur = ui->sourceBox->textCursor();
             cur.setPosition(j.second);
-            highlightBreakpoint(cur, true);
+            highlightBreakpoint(cur, true, false);
         }
     }
+    ui->sourceBox->document()->setModified(tmpmodified);
 }
 
-void MainWindow::highlightBreakpoint(QTextCursor curs, bool breakpoint)
+void MainWindow::highlightBreakpoint(QTextCursor curs, bool breakpoint, bool standalone)
 {
+    bool tmpmodified;
+    if (standalone) tmpmodified = modified;
     curs.setPosition(curs.position() + 1, QTextCursor::KeepAnchor);
     if (breakpoint && curs.position() - 1 == torus->position()) curs.setCharFormat(*cursorAndBreakpointFormat);
     else if (breakpoint) curs.setCharFormat(*breakpointFormat);
     else if (curs.position() - 1 == torus->position()) curs.setCharFormat(*currentCharFormat);
     else syntaxHighlight(&curs);
     curs.clearSelection();
+    if (standalone) ui->sourceBox->document()->setModified(tmpmodified);  // only do this if it was a standalone call
+                                                                          // so that the highlightBreakpoints() function doesn't do it for every char
 
 }
 
@@ -1167,13 +1182,15 @@ void MainWindow::syntaxHighlightSource()
     for (int i = 0; i < size - 1; i++) {
         cursor->clearSelection();
         cursor->setPosition(i + 1, QTextCursor::KeepAnchor);
-        syntaxHighlight(cursor);
+        syntaxHighlight(cursor, false);
     }
     ui->sourceBox->document()->setModified(tmpModified);
 }
 
-void MainWindow::syntaxHighlight(QTextCursor *cursor)
+void MainWindow::syntaxHighlight(QTextCursor *cursor, bool standalone)
 {
+    bool tmpmodified;
+    if (standalone) tmpmodified = modified;  // if the call to this function was standalone, then we store the modification state.
     if (isBreakpoint(cursor->position() - 1)){
         cursor->setCharFormat(*breakpointFormat);
         return;
@@ -1225,11 +1242,16 @@ void MainWindow::syntaxHighlight(QTextCursor *cursor)
     }
     }
     cursor->setCharFormat(*invalidFormat);
+
+    if (standalone) ui->sourceBox->document()->setModified(tmpmodified);  // only do this if it was a standalone call
+                                                                          // so that the syntaxHighlight() function doesn't do it for every char
     return;
 }
 
-void MainWindow::syntaxHighlightPC(QTextCursor *cursor)
+void MainWindow::syntaxHighlightPC(QTextCursor *cursor, bool standalone)
 {
+    bool tmpmodified;
+    if (standalone) tmpmodified = modified;
     char selected = cursor->selectedText().at(0).toLatin1();
     switch (selected){
     case ('>'): case ('v'): case ('<'): case ('^'): case ('?'): {
@@ -1277,6 +1299,8 @@ void MainWindow::syntaxHighlightPC(QTextCursor *cursor)
     }
     }
     cursor->setCharFormat(*invalidFormatPC);
+
+    if (standalone) ui->sourceBox->document()->setModified(tmpmodified);  // only do this if it was a standalone call
     return;
 }
 
@@ -1285,6 +1309,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     if (running) running = false;
     if (started) started = false;
     if (modified){
+        if (mode == RUN) ui->editRadioButton->toggle();  // saving in run mode might save changes that were made during run, when user doesn't want that.
         on_actionClose_File_triggered();
     }
 

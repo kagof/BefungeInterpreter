@@ -13,7 +13,7 @@ class ClickFilter : public QObject
 {
     Q_OBJECT
 public:
-    ClickFilter(MainWindow* parentMainWindow, QPlainTextEdit *sourceBox, QObject *parent = 0);
+    ClickFilter(MainWindow* parentMainWindow, QObject *parent = 0);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
@@ -24,7 +24,6 @@ public slots:
 
 private:
     MainWindow *parentMainWindow;
-    QPlainTextEdit *sourceBox;
 };
 
 #endif // CLICKFILTER_H

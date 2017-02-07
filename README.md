@@ -67,7 +67,7 @@ Of course, the best way to use Befunge is to write your own programs!
 ## Future Implementations
 
 These features should be implemented in the future:
-* Working keyboard shortcuts listed in the menus.
+* ~~Working keyboard shortcuts listed in the menus.~~ *this was always working, not sure why I thought it wasn't. Slightly improved now.*
 * Toggle whether to restrict playing field to 80x25 torus.
 * customizable syntax highlighting colours, ability to turn syntax highlighting off.
 * Allow input of longer strings, taking only first character, then the next, etc.
