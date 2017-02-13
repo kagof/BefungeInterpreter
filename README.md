@@ -2,9 +2,9 @@
 
 <p align="center"><img src="https://github.com/kagof/BefungeInterpreter/blob/master/BefungeInterpreter/Misc/icon.ico"></p>
 
-# Current Version: 1.0.1
+# Current Version: 1.2.0
 
-A C++/QT GUI interpreter for the Befunge-93 esoteric programming language. Tested and created on Windows 10 with QT version 5.7.0 & MinGW G++ 32bit compiler 5.3.0. Developed by Karl Goffin. Released under the MIT open source license. 
+A C++/QT GUI interpreter for the Befunge-93 esoteric programming language. Tested and created on Windows 10 with QT version 5.7.1 & MinGW G++ 32bit compiler 5.3.0. Developed by Karl Goffin. Released under the MIT open source license. 
 
 (c) 2016-2017 Karl Goffin.
 
@@ -14,9 +14,9 @@ A C++/QT GUI interpreter for the Befunge-93 esoteric programming language. Teste
 
 ## Installing
 
-There is a Windows installer for version 1.0.1 - built using [Inno Setup Compiler](http://www.jrsoftware.org/isinfo.php) 5.5.9 - hosted [here](https://github.com/kagof/BefungeInterpreter/tree/master/Installer) in this repo. Note that it is not recommended to download and run strange .exe files from the Internet, and your virus checker will probably not like this file, so it may be preferable to instead follow the build instructions. Checksums are also located in the Installer directory.
+There is a Windows installer for version 1.2.0 - built using [Inno Setup Compiler](http://www.jrsoftware.org/isinfo.php) 5.5.9 - hosted [here](https://github.com/kagof/BefungeInterpreter/tree/master/Installer) in this repo. Note that it is not recommended to download and run strange .exe files from the Internet, and your virus checker will probably not like this file, so it may be preferable to instead follow the build instructions. Checksums are also located in the Installer directory.
 
-**Executable:** [kagof-bfi-setup-windows-1-0-1.exe](https://github.com/kagof/BefungeInterpreter/tree/master/Installer/kagof-bfi-setup-windows-1-0-1.exe)
+**Executable:** [kagof-bfi-setup-windows-1-2-0.exe](https://github.com/kagof/BefungeInterpreter/tree/master/Installer/kagof-bfi-setup-windows-1-2-0.exe)
 
 ## Building
 
@@ -25,7 +25,7 @@ The easiest way to build this project is to clone this repository and build it a
 ## Features
 
 * GUI display - showing the source code, stack, an input field, and output.
-* Start, step, and slow modes for running Befunge programs
+* Start, debug, step, and slow modes for running Befunge programs
 * Save/Load Befunge source code files
 * Source code editing
 * Program counter highlights the current instruction being carried out
@@ -67,15 +67,17 @@ Of course, the best way to use Befunge is to write your own programs!
 ## Future Implementations
 
 These features should be implemented in the future:
-* ~~Working keyboard shortcuts listed in the menus.~~ *this was always working, not sure why I thought it wasn't. Slightly improved now.*
 * Toggle whether to restrict playing field to 80x25 torus.
+* Persistent reset button (to reset when partway through a run)
 * customizable syntax highlighting colours, ability to turn syntax highlighting off.
 * Allow input of longer strings, taking only first character, then the next, etc.
-* ~~Debug mode (allowing insertions of breakpoints in the code). Currently the button does nothing.~~ *Breakpoints can be created in run mode by clicking on desired character. Debug mode is functional.*
-* ~~Include version number somewhere on the software itself.~~ *added version label.*
 * Help in the software (tooltips and/or whats this).
 
 ## Version History
+
+* Kagof Befunge-93 Interpreter v1.2.0
+	- debug mode - click characters in run mode to add breakpoint.
+	- minor bugfixes & improvements
 
 * Kagof Befunge-93 Interpreter [v1.0.1](https://github.com/kagof/BefungeInterpreter/tree/d8da112cd4bf857b5876c451a327c14fa1712638)
     - bugfixes

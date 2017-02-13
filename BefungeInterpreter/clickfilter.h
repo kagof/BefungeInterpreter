@@ -1,3 +1,18 @@
+/*
+╔═══════════════════════════════════════════════════╗
+║* * * * * * * * * * * * * * * * * * * * * * * * * *║
+║*                                                 *║
+║*      Kagof Befunge-93 Interpreter v1.2.0        *║
+║*      copyright (c) Karl Goffin 2016-2017        *║
+║*    released under the open source MIT license   *║
+║*                                                 *║
+║*   http://github.com/Kagof/BefungeInterpreter    *║
+║*                                                 *║
+║*                                                 *║
+║* * * * * * * * * * * * * * * * * * * * * * * * * *║
+╚═══════════════════════════════════════════════════╝
+                                                   */
+
 #ifndef CLICKFILTER_H
 #define CLICKFILTER_H
 

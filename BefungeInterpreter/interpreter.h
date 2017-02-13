@@ -2,7 +2,7 @@
 ╔═══════════════════════════════════════════════════╗
 ║* * * * * * * * * * * * * * * * * * * * * * * * * *║
 ║*                                                 *║
-║*      Kagof Befunge-93 Interpreter v1.0.1        *║
+║*      Kagof Befunge-93 Interpreter v1.2.0        *║
 ║*      copyright (c) Karl Goffin 2016-2017        *║
 ║*    released under the open source MIT license   *║
 ║*                                                 *║

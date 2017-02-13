@@ -2,7 +2,7 @@
 ╔═══════════════════════════════════════════════════╗
 ║* * * * * * * * * * * * * * * * * * * * * * * * * *║
 ║*                                                 *║
-║*      Kagof Befunge-93 Interpreter v1.0.1        *║
+║*      Kagof Befunge-93 Interpreter v1.2.0        *║
 ║*      copyright (c) Karl Goffin 2016-2017        *║
 ║*    released under the open source MIT license   *║
 ║*                                                 *║
@@ -1189,7 +1189,7 @@ void MainWindow::syntaxHighlightSource()
 
 void MainWindow::syntaxHighlight(QTextCursor *cursor, bool standalone)
 {
-    bool tmpmodified;
+    bool tmpmodified = false;
     if (standalone) tmpmodified = modified;  // if the call to this function was standalone, then we store the modification state.
     if (isBreakpoint(cursor->position() - 1)){
         cursor->setCharFormat(*breakpointFormat);
@@ -1250,7 +1250,7 @@ void MainWindow::syntaxHighlight(QTextCursor *cursor, bool standalone)
 
 void MainWindow::syntaxHighlightPC(QTextCursor *cursor, bool standalone)
 {
-    bool tmpmodified;
+    bool tmpmodified = false;
     if (standalone) tmpmodified = modified;
     char selected = cursor->selectedText().at(0).toLatin1();
     switch (selected){
