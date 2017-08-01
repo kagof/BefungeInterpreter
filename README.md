@@ -67,6 +67,8 @@ Of course, the best way to use Befunge is to write your own programs!
 ## Future Implementations
 
 These features should be implemented in the future:
+* Some pretty huge code refactoring is needed. Serves me right for not properly planning out the structure before I started programming this, but there is currently very high coupling between classes, and fairly low cohesion, so added any new features is becoming an increasing challenge.
+* Foreground and background threads.
 * Toggle whether to restrict playing field to 80x25 torus.
 * Persistent reset button (to reset when partway through a run)
 * customizable syntax highlighting colours, ability to turn syntax highlighting off.
